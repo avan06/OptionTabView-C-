@@ -6,11 +6,13 @@ namespace OptionTreeView
 {
     public class BaseOption
     {
+        public Object BaseObject { get; set; }
         public string TreeName { get; private set; }
         public string GroupName { get; private set; }
         public string Description { get; private set; }
-        public BaseOption(string treeName, string groupName, string description)
+        public BaseOption(Object baseObject, string treeName, string groupName, string description)
         {
+            BaseObject = baseObject;
             TreeName = treeName;
             GroupName = groupName;
             Description = description;
@@ -29,20 +31,19 @@ namespace OptionTreeView
     [SettingsSerializeAs(SettingsSerializeAs.String)]
     public class Option<T> : BaseOption
     {
-        public T Value { get; set; }
-        public Option(T value) : this(value, "Default", "Default", "") { }
-        public Option(T value, string treeName, string groupName, string description) : base(treeName, groupName, description) => Value = value;
+        public T Value { get => (T)BaseObject; set => BaseObject = value; }
+        public Option(T value, string treeName = "Default", string groupName = "Default", string description = "") : base(value, treeName, groupName, description) { }
         public override string ToString() => Value == null ? "" : Value.ToString();
     }
 
     public class OptionTypeConverter : TypeConverter
     {
         public static char Separator { get; set; } = '|';
-        public Type genericInstanceType { get; private set; }
-        public Type innerType { get; private set; }
-        public Type typeOfOption { get; private set; }
-        public Type typeOfOptionWithGenericArgument { get; private set; }
-        public TypeConverter innerTypeConverter { get; private set; }
+        public Type GenericInstanceType { get; private set; }
+        public Type InnerType { get; private set; }
+        public Type TypeOfOption { get; private set; }
+        public Type TypeOfOptionWithGenericArgument { get; private set; }
+        public TypeConverter InnerTypeConverter { get; private set; }
 
         /// <summary>
         /// Creating an single Converter that could hanlde all of the types derrived
@@ -53,11 +54,11 @@ namespace OptionTreeView
             if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Option<>) || type.GetGenericArguments().Length != 1)
                 throw new ArgumentException(String.Format("OptionTypeConverter: Incompatible type: {0}", type), "type");
 
-            genericInstanceType = type;
-            innerType = type.GetGenericArguments()[0];
-            innerTypeConverter = TypeDescriptor.GetConverter(innerType);
-            typeOfOption = typeof(Option<>);
-            typeOfOptionWithGenericArgument = typeOfOption.MakeGenericType(innerType);
+            GenericInstanceType = type;
+            InnerType = type.GetGenericArguments()[0];
+            InnerTypeConverter = TypeDescriptor.GetConverter(InnerType);
+            TypeOfOption = typeof(Option<>);
+            TypeOfOptionWithGenericArgument = TypeOfOption.MakeGenericType(InnerType);
         }
 
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string);
@@ -68,10 +69,11 @@ namespace OptionTreeView
         /// </summary>
         public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
         {
-            if (!(value is string str)) { return base.ConvertFrom(context, culture, value); }
+            if (value == null) return (BaseOption)Activator.CreateInstance(TypeOfOptionWithGenericArgument, null, "Default", "Default", "");
+            if (!(value is string str)) return base.ConvertFrom(context, culture, value);
 
             string[] parts = str.Split(new char[] { Separator });
-            return (BaseOption)Activator.CreateInstance(typeOfOptionWithGenericArgument, innerTypeConverter.ConvertFrom(parts[0]),
+            return (BaseOption)Activator.CreateInstance(TypeOfOptionWithGenericArgument, InnerTypeConverter.ConvertFrom(parts[0]),
                 parts.Length > 1 ? parts[1] : "Default",
                 parts.Length > 2 ? parts[2] : "Default",
                 parts.Length > 3 ? parts[3] : "");
@@ -83,14 +85,14 @@ namespace OptionTreeView
         /// </summary>
         public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
         {
-            if (destinationType != typeof(string) || !genericInstanceType.IsGenericType || genericInstanceType.GetGenericTypeDefinition() != typeof(Option<>))
+            if (destinationType != typeof(string) || !GenericInstanceType.IsGenericType || GenericInstanceType.GetGenericTypeDefinition() != typeof(Option<>))
                 return base.ConvertTo(context, culture, value, destinationType);
 
             return string.Format("{0}" + Separator + "{1}" + Separator + "{2}" + Separator + "{3}",
-                genericInstanceType.GetProperty("Value").GetValue(value, null),
-                genericInstanceType.GetProperty("TreeName").GetValue(value, null),
-                genericInstanceType.GetProperty("GroupName").GetValue(value, null),
-                genericInstanceType.GetProperty("Description").GetValue(value, null));
+                GenericInstanceType.GetProperty("Value").GetValue(value, null),
+                GenericInstanceType.GetProperty("TreeName").GetValue(value, null),
+                GenericInstanceType.GetProperty("GroupName").GetValue(value, null),
+                GenericInstanceType.GetProperty("Description").GetValue(value, null));
         }
     }
 }

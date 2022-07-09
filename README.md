@@ -28,6 +28,8 @@ that automatically generates options windows view. (using Settings.settings)
 - For `standard type` settings, trees and groups will be set to `"Default"`.
 - After specifying the Type of settings to `"OptionTreeView.Option" generic class`, the settings can be categorized into the `specified trees and groups`.
 
+![OptionForm](assets/OptionForm.webp)
+
 
 ## Getting Started
 
@@ -53,7 +55,7 @@ that automatically generates options windows view. (using Settings.settings)
 ### Generic(OptionTreeView.Option) in Settings
 
 - To make the settings have tree and group classification, the type must be changed to `OptionTreeView.Option` generic class.
-- Generic supported types are `sbyte, short, int, long, byte, ushort, uint, ulong, decimal, float, double, Enum, bool, string`.
+- Generic supported types are `sbyte, short, int, long, byte, ushort, uint, ulong, decimal, float, double, Enum, bool, string` and `System.Drawing.KnownColor` for Color Picker ComboBox.
 - The Settings in the GUI Designer interface cannot set the type to a generic class, but...
 - You can open Settings.settings with `XML(text) Editor`, and insert the generic class inside <Settings>, Refer to [Generic types for Settings.settings](https://stackoverflow.com/a/4046036)
 - The format of the `OptionTreeView.Option` generic class in the setting value is: "value`|`TreeName`|`GroupName`|`Description", use Vertical bar(`|`) to separate text, such as `"100|general|factor|This is Description"`.
@@ -103,8 +105,6 @@ optionTreeView1.InitSettings(Properties.Settings.Default);
 ### Prompt Save
 
 - If the value is changed, it will ask if you want to save the setting when closing the window.
-
-![OptionForm](assets/OptionForm.webp)
 
 
 ### Properties

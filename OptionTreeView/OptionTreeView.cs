@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace OptionTreeView
 {
+    [Docking(DockingBehavior.Ask)]
     public partial class OptionTreeView: UserControl
     {
         #region Fields
@@ -30,10 +31,7 @@ namespace OptionTreeView
         #endregion
 
         #region Control Event
-        private void OptionTreeView_Load(object sender, EventArgs e)
-        {
-            ParentForm.FormClosing += ParentForm_FormClosing;
-        }
+        private void OptionTreeView_Load(object sender, EventArgs e) => ParentForm.FormClosing += ParentForm_FormClosing;
 
         private void ParentForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -44,6 +42,31 @@ namespace OptionTreeView
 
             Default.Save();
             MessageBox.Show("Save", "OptionTreeView", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/a/25616698
+        /// </summary>
+        private void ColorBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            using (Graphics g = e.Graphics)
+            {
+                Rectangle rect = e.Bounds; //Rectangle of item
+                //Get item color name
+                string itemName = ((ComboBox)sender).Items[e.Index].ToString();
+                //Get instance color from item name
+                Color itemColor = Color.FromName(itemName);
+                //Get instance brush with Solid style to draw background
+                Brush brush = new SolidBrush(itemColor);
+                //Draw the background with my brush style and rectangle of item
+                g.FillRectangle(brush, rect.X, rect.Y, rect.Width, rect.Height);
+                //Get instance a font to draw item name with this style
+                Font itemFont = new Font(e.Font.FontFamily, e.Font.Size, FontStyle.Bold);
+                //Draw the item name
+                g.DrawString(itemName, itemFont, itemColor.GetBrightness() >= 0.4 ? Brushes.Black : Brushes.White, rect.X, rect.Top);
+            }
         }
         #endregion
 
@@ -247,8 +270,6 @@ namespace OptionTreeView
 
         #region public method
         #region Init TreeGroupOptions
-
-
         /// <summary>
         /// Parse Settings to TreeGroupOptions list
         /// </summary>
@@ -265,7 +286,8 @@ namespace OptionTreeView
             {
                 string name = property.Name;
                 object value = Default[name];
-                Type optionInstanceType = value.GetType();
+                Type optionInstanceType = property.PropertyType; //value.GetType();
+                object defaultValue = property.DefaultValue; //if (defaultValue == null && optionInstanceType.IsValueType) defaultValue = Activator.CreateInstance(optionInstanceType);
 
                 object oValue = null;
                 string oTreeName = null;
@@ -276,12 +298,13 @@ namespace OptionTreeView
                 else if (optionInstanceType.GetGenericTypeDefinition() != typeof(Option<>)) continue;
                 else
                 {
-                    oValue = optionInstanceType.GetProperty("Value").GetValue(value, null);
                     TypeConverter optionTypeConverter = TypeDescriptor.GetConverter(optionInstanceType);
-                    BaseOption defValue = optionTypeConverter.ConvertFrom(property.DefaultValue) as BaseOption;
+                    BaseOption defValue = optionTypeConverter.ConvertFrom(defaultValue) as BaseOption;
                     oTreeName = defValue.TreeName;
                     oGroupName = defValue.GroupName;
                     oDescription = defValue.Description;
+                    oValue = value != null ? optionInstanceType.GetProperty("Value").GetValue(value, null) : defValue.BaseObject;
+                    if (value == null) Default[name] = defValue;
                 }
 
                 if ((oTreeName ?? "") == "") oTreeName = "Default";
@@ -406,6 +429,11 @@ namespace OptionTreeView
                     control = new ComboBox { FormattingEnabled = true };
                     control.Tag = option;
                     foreach (object enumObj in Enum.GetValues(enumVal.GetType())) ((ComboBox)control).Items.Add(enumObj);
+                    if (enumVal.GetType().Name == "KnownColor")
+                    {
+                        ((ComboBox)control).DrawMode = DrawMode.OwnerDrawVariable;
+                        ((ComboBox)control).DrawItem += new DrawItemEventHandler(ColorBox_DrawItem);
+                    }
                     ((ComboBox)control).SelectedItem = enumVal;
                     ((ComboBox)control).SelectedIndexChanged += Control_Changed;
                 }
@@ -490,7 +518,8 @@ namespace OptionTreeView
             try
             {
                 object value = Default[name];
-                Type optionInstanceType = value.GetType();
+                SettingsProperty property = Default.Properties[name];
+                Type optionInstanceType = property.PropertyType; //value.GetType();
 
                 if (!optionInstanceType.IsGenericType) Default[name] = newVal;
                 else
