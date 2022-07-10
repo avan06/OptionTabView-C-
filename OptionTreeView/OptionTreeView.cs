@@ -45,6 +45,7 @@ namespace OptionTreeView
         }
 
         /// <summary>
+        /// Color Picker Combo Box
         /// https://stackoverflow.com/a/25616698
         /// </summary>
         private void ColorBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -68,27 +69,37 @@ namespace OptionTreeView
                 g.DrawString(itemName, itemFont, itemColor.GetBrightness() >= 0.4 ? Brushes.Black : Brushes.White, rect.X, rect.Top);
             }
         }
+
+        private void ColorBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is KnownColor knownColor)
+            {
+                Color itemColor = Color.FromKnownColor(knownColor);
+                comboBox.ForeColor = itemColor.GetBrightness() >= 0.4 ? Color.Black : Color.White;
+                comboBox.BackColor = itemColor;
+            }
+        }
         #endregion
 
         #region properties Appearance
         /// <summary>
         /// Gets or sets the foreground color of OptionLeftView.
         /// </summary>
-        [Category("Appearance"), Description("Gets or sets the foreground color of OptionLeftView."), DefaultValue(typeof(Color), "White")]
+        [Category("Appearance"), Description("Gets or sets the foreground color of OptionLeftView.")]
         public Color ForeColorLeftView
         {
-            get { return OptionLeftView.ForeColor; }
-            set { OptionLeftView.ForeColor = value; }
+            get => OptionLeftView.ForeColor;
+            set => OptionLeftView.ForeColor = value;
         }
 
         /// <summary>
         /// Gets or sets the background color of OptionLeftView.
         /// </summary>
-        [Category("Appearance"), Description("Gets or sets the background color of OptionLeftView."), DefaultValue(typeof(Color), "White")]
+        [Category("Appearance"), Description("Gets or sets the background color of OptionLeftView.")]
         public Color BackColorLeftView
         {
-            get { return OptionLeftView.BackColor; }
-            set { OptionLeftView.BackColor = value; }
+            get => OptionLeftView.BackColor;
+            set => OptionLeftView.BackColor = value;
         }
 
         /// <summary>
@@ -97,8 +108,8 @@ namespace OptionTreeView
         [Category("Appearance"), Description("Gets or sets the border style of OptionLeftView.")]
         public BorderStyle BorderStyleLeftView
         {
-            get { return OptionLeftView.BorderStyle; }
-            set { OptionLeftView.BorderStyle = value; }
+            get => OptionLeftView.BorderStyle;
+            set => OptionLeftView.BorderStyle = value;
         }
 
         /// <summary>
@@ -107,8 +118,8 @@ namespace OptionTreeView
         [Category("Appearance"), Description("Gets or sets the font of OptionLeftView.")]
         public Font FontLeftView
         {
-            get { return OptionLeftView.Font; }
-            set { OptionLeftView.Font = value; }
+            get => OptionLeftView.Font;
+            set => OptionLeftView.Font = value;
         }
 
         /// <summary>
@@ -117,8 +128,8 @@ namespace OptionTreeView
         [Category("Appearance"), Description("Gets or sets the height of each tree node in the OptionLeftView.")]
         public int ItemHeightLeftView
         {
-            get { return OptionLeftView.ItemHeight; }
-            set { OptionLeftView.ItemHeight = value; }
+            get => OptionLeftView.ItemHeight;
+            set => OptionLeftView.ItemHeight = value;
         }
         #endregion
         #region properties Behavior
@@ -128,8 +139,8 @@ namespace OptionTreeView
         [Category("Behavior"), Description("Gets or sets the ContextMenuStrip associated with this OptionLeftView.")]
         public ContextMenuStrip ContextMenuStripLeftView
         {
-            get { return OptionLeftView.ContextMenuStrip; }
-            set { OptionLeftView.ContextMenuStrip = value; }
+            get => OptionLeftView.ContextMenuStrip;
+            set => OptionLeftView.ContextMenuStrip = value;
         }
 
         /// <summary>
@@ -138,16 +149,17 @@ namespace OptionTreeView
         [Category("Behavior"), Description("Gets or sets a value indicating whether the selection highlight spans the width of OptionLeftView.")]
         public bool FullRowSelectLeftView
         {
-            get { return OptionLeftView.FullRowSelect; }
-            set { OptionLeftView.FullRowSelect = value; }
+            get => OptionLeftView.FullRowSelect;
+            set => OptionLeftView.FullRowSelect = value;
         }
 
         /// <summary>
         /// Gets or sets whether to show the left tree view.
         /// </summary>
         [Category("Behavior"), Description("Gets or sets whether to show the left tree view."), DefaultValue(true)]
-        public bool ShowLeftView {
-            get { return showLeftView; }
+        public bool ShowLeftView
+        {
+            get => showLeftView;
             set
             {
                 showLeftView = value;
@@ -190,8 +202,8 @@ namespace OptionTreeView
         [Category("Layout"), Description("Gets or sets a value determining whether OptionLeft is collapsed or expanded.")]
         public bool OptionLeftCollapsed
         {
-            get { return SplitContainer1.Panel1Collapsed; }
-            set { SplitContainer1.Panel1Collapsed = value; }
+            get => SplitContainer1.Panel1Collapsed;
+            set => SplitContainer1.Panel1Collapsed = value;
         }
 
         /// <summary>
@@ -200,8 +212,8 @@ namespace OptionTreeView
         [Category("Layout"), Description("Gets or sets the minimum distance in pixels of the OptionLeft.")]
         public int OptionLeftMinSize
         {
-            get { return SplitContainer1.Panel1MinSize; }
-            set { SplitContainer1.Panel1MinSize = value; }
+            get => SplitContainer1.Panel1MinSize;
+            set => SplitContainer1.Panel1MinSize = value;
         }
 
         /// <summary>
@@ -210,8 +222,8 @@ namespace OptionTreeView
         [Category("Layout"), Description("Gets or sets a value determining whether OptionRight is collapsed or expanded.")]
         public bool OptionRightCollapsed
         {
-            get { return SplitContainer1.Panel2Collapsed; }
-            set { SplitContainer1.Panel2Collapsed = value; }
+            get => SplitContainer1.Panel2Collapsed;
+            set => SplitContainer1.Panel2Collapsed = value;
         }
 
         /// <summary>
@@ -220,8 +232,8 @@ namespace OptionTreeView
         [Category("Layout"), Description("Gets or sets the minimum distance in pixels of the OptionRight.")]
         public int OptionRightMinSize
         {
-            get { return SplitContainer1.Panel2MinSize; }
-            set { SplitContainer1.Panel2MinSize = value; }
+            get => SplitContainer1.Panel2MinSize;
+            set => SplitContainer1.Panel2MinSize = value;
         }
 
         /// <summary>
@@ -230,8 +242,8 @@ namespace OptionTreeView
         [Category("Layout"), Description("Gets or sets the location of the splitter, in pixels, from the left or top edge of the SplitContainer.")]
         public int SplitterDistance
         {
-            get { return SplitContainer1.SplitterDistance;}
-            set { SplitContainer1.SplitterDistance = value; }
+            get => SplitContainer1.SplitterDistance;
+            set => SplitContainer1.SplitterDistance = value;
         }
 
         /// <summary>
@@ -240,8 +252,8 @@ namespace OptionTreeView
         [Category("Layout"), Description("Gets or sets a value representing the increment of splitter movement in pixels.")]
         public int SplitterIncrement
         {
-            get { return SplitContainer1.SplitterIncrement; }
-            set { SplitContainer1.SplitterIncrement = value; }
+            get => SplitContainer1.SplitterIncrement;
+            set => SplitContainer1.SplitterIncrement = value;
         }
 
         /// <summary>
@@ -250,8 +262,8 @@ namespace OptionTreeView
         [Category("Layout"), Description("Gets or sets the width of the splitter in pixels.")]
         public int SplitterWidth
         {
-            get { return SplitContainer1.SplitterWidth; }
-            set { SplitContainer1.SplitterWidth = value; }
+            get => SplitContainer1.SplitterWidth;
+            set => SplitContainer1.SplitterWidth = value;
         }
         #endregion
         #region properties Hidden
@@ -347,8 +359,8 @@ namespace OptionTreeView
                 if (tmpOption.Name == null || tmpOption.TreeName != option.TreeName)
                 { //Create new tree node and TableLayoutPanel when TreeName has changed
                     TreeNode OptionLeftNode = new TreeNode(SortTreeBeforeUnderline && option.TreeName.Contains("_") ? option.TreeName.Split(new char[] { '_' }, 2)[1] : option.TreeName);
-                    OptionLeftNode.ForeColor = base.ForeColor;
-                    OptionLeftNode.BackColor = base.BackColor;
+                    OptionLeftNode.ForeColor = OptionLeftView.ForeColor;
+                    OptionLeftNode.BackColor = OptionLeftView.BackColor;
                     OptionLeftView.Nodes.Add(OptionLeftNode);
                     if (TablePanelTop != null)
                     {
@@ -411,6 +423,7 @@ namespace OptionTreeView
                 label.Tag = option;
                 label.Dock = DockStyle.Fill;
                 label.Padding = new Padding(0, 5, 0, 0);
+                bool isKnownColor = false;
                 Control control = null;
                 (int DecimalPlaces, decimal Increment, decimal Maximum, decimal Minimum, decimal Value) numeric = (0, 0, 0, 0, 0);
                 if (option.Value is sbyte sbyteVal) numeric = (0, 1, 127, -127, sbyteVal);
@@ -431,8 +444,10 @@ namespace OptionTreeView
                     foreach (object enumObj in Enum.GetValues(enumVal.GetType())) ((ComboBox)control).Items.Add(enumObj);
                     if (enumVal.GetType().Name == "KnownColor")
                     {
+                        isKnownColor = true;
                         ((ComboBox)control).DrawMode = DrawMode.OwnerDrawVariable;
                         ((ComboBox)control).DrawItem += new DrawItemEventHandler(ColorBox_DrawItem);
+                        ((ComboBox)control).SelectedIndexChanged += ColorBox_SelectedIndexChanged;
                     }
                     ((ComboBox)control).SelectedItem = enumVal;
                     ((ComboBox)control).SelectedIndexChanged += Control_Changed;
@@ -469,8 +484,11 @@ namespace OptionTreeView
                 }
 
                 TablePanelSub.Controls.Add(control);
-                control.ForeColor = base.ForeColor;
-                control.BackColor = base.BackColor;
+                if (!isKnownColor)
+                {
+                    control.ForeColor = base.ForeColor;
+                    control.BackColor = base.BackColor;
+                }
                 control.ImeMode = ImeMode.Off;
                 control.Dock = DockStyle.Fill;
                 control.MouseHover += Control_MouseHover;

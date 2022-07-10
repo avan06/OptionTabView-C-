@@ -12,7 +12,7 @@ namespace OptionTreeViewTestApp.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.2.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -37,7 +37,7 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1|1_General|Enum|This is Enum1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1|1_General|1_Enum|This is Enum1")]
         public global::OptionTreeView.Option<OptionTreeViewTestApp.ImageType> Enum1 {
             get {
                 return ((global::OptionTreeView.Option<OptionTreeViewTestApp.ImageType>)(this["Enum1"]));
@@ -49,13 +49,37 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Bmp|1_General|Enum|This is Enum2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Bmp|1_General|1_Enum|This is Enum2")]
         public global::OptionTreeView.Option<OptionTreeViewTestApp.ImageType> Enum2 {
             get {
                 return ((global::OptionTreeView.Option<OptionTreeViewTestApp.ImageType>)(this["Enum2"]));
             }
             set {
                 this["Enum2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("CornflowerBlue|1_General|2_KnownColor|This is Color1")]
+        public global::OptionTreeView.Option<System.Drawing.KnownColor> Color1 {
+            get {
+                return ((global::OptionTreeView.Option<System.Drawing.KnownColor>)(this["Color1"]));
+            }
+            set {
+                this["Color1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("DarkSeaGreen|1_General|2_KnownColor|This is Color2")]
+        public global::OptionTreeView.Option<System.Drawing.KnownColor> Color2 {
+            get {
+                return ((global::OptionTreeView.Option<System.Drawing.KnownColor>)(this["Color2"]));
+            }
+            set {
+                this["Color2"] = value;
             }
         }
         

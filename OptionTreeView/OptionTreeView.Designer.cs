@@ -41,7 +41,6 @@
             this.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.SplitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.SplitContainer1.Margin = new System.Windows.Forms.Padding(4);
             this.SplitContainer1.Name = "SplitContainer1";
             // 
             // SplitContainer1.Panel1
@@ -51,33 +50,31 @@
             // SplitContainer1.Panel2
             // 
             this.SplitContainer1.Panel2.AutoScroll = true;
-            this.SplitContainer1.Size = new System.Drawing.Size(762, 483);
+            this.SplitContainer1.Size = new System.Drawing.Size(508, 322);
             this.SplitContainer1.SplitterDistance = 160;
-            this.SplitContainer1.SplitterWidth = 6;
             this.SplitContainer1.TabIndex = 0;
             // 
             // OptionLeftView
             // 
             this.OptionLeftView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.OptionLeftView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OptionLeftView.FullRowSelect = true;
             this.OptionLeftView.Location = new System.Drawing.Point(0, 0);
-            this.OptionLeftView.Margin = new System.Windows.Forms.Padding(4);
             this.OptionLeftView.Name = "OptionLeftView";
             this.OptionLeftView.ShowLines = false;
             this.OptionLeftView.ShowPlusMinus = false;
             this.OptionLeftView.ShowRootLines = false;
-            this.OptionLeftView.Size = new System.Drawing.Size(158, 481);
+            this.OptionLeftView.Size = new System.Drawing.Size(158, 320);
             this.OptionLeftView.TabIndex = 0;
             this.OptionLeftView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OptionLeftView_AfterSelect);
             // 
             // OptionTreeView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.SplitContainer1);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "OptionTreeView";
-            this.Size = new System.Drawing.Size(762, 483);
+            this.Size = new System.Drawing.Size(508, 322);
             this.Load += new System.EventHandler(this.OptionTreeView_Load);
             this.SplitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SplitContainer1)).EndInit();

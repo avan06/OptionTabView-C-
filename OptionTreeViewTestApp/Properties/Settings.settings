@@ -1,72 +1,78 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OptionTreeViewTestApp.Properties" GeneratedClassName="Settings">
-	<Profiles />
-	<Settings>
-		<Setting Name="strKey" Type="System.String" Scope="User">
-			<Value Profile="(Default)">ValueKey123</Value>
-		</Setting>
-		<Setting Name="Enum1" Type="OptionTreeView.Option&lt;OptionTreeViewTestApp.ImageType&gt;" Scope="User">
-			<Value Profile="(Default)">1|1_General|Enum|This is Enum1</Value>
-		</Setting>
-		<Setting Name="Enum2" Type="OptionTreeView.Option&lt;OptionTreeViewTestApp.ImageType&gt;" Scope="User">
-			<Value Profile="(Default)">Bmp|1_General|Enum|This is Enum2</Value>
-		</Setting>
-		<Setting Name="IP" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
-			<Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>
-		</Setting>
-		<Setting Name="PORT" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-			<Value Profile="(Default)">80|1_General|Z_Connect1|This is PORT</Value>
-		</Setting>
-		<Setting Name="Version" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
-			<Value Profile="(Default)">9.99|1_General|Connect2|This is Version</Value>
-		</Setting>
-		<Setting Name="Type" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
-			<Value Profile="(Default)">TEST|1_General|Connect2|This is Type</Value>
-		</Setting>
-		<Setting Name="Work3" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">true|1_General|Connect3|This is Work3</Value>
-		</Setting>
-		<Setting Name="Work4" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">false|1_General|Connect3|This is Work4</Value>
-		</Setting>
-		<Setting Name="Work5" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">false|1_General|Connect3|This is Work5</Value>
-		</Setting>
-		<Setting Name="Work6" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">true|1_General|Connect3|This is Work6</Value>
-		</Setting>
-		<Setting Name="Work7" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">true|1_General|Connect3|This is Work7</Value>
-		</Setting>
-		<Setting Name="Work8" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">true|1_General|Connect3|This is Work8</Value>
-		</Setting>
-		<Setting Name="Work9" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">false|1_General|Connect3|This is Work9</Value>
-		</Setting>
-		<Setting Name="Setting3" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
-			<Value Profile="(Default)">1.23|1_General|Connect3|This is Setting3</Value>
-		</Setting>
-		<Setting Name="Setting4" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
-			<Value Profile="(Default)">4.56|1_General|Connect3|This is Setting4</Value>
-		</Setting>
-		<Setting Name="Setting5" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
-			<Value Profile="(Default)">7.89|1_General|Connect3|This is Setting5</Value>
-		</Setting>
-		<Setting Name="Setting6" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
-			<Value Profile="(Default)">0.98|1_General|Connect3|This is Setting6</Value>
-		</Setting>
-		<Setting Name="Work1_abcdef123456789_abcdef123456789_abcdef123456789" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">true||Z_Connect1|This is Work1</Value>
-		</Setting>
-		<Setting Name="Work2" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-			<Value Profile="(Default)">false||Connect2|This is Work2</Value>
-		</Setting>
-		<Setting Name="Setting1" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-			<Value Profile="(Default)">123|Other</Value>
-		</Setting>
-		<Setting Name="Setting2" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-			<Value Profile="(Default)">456|Other</Value>
-		</Setting>
-	</Settings>
+  <Profiles />
+  <Settings>
+    <Setting Name="strKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ValueKey123</Value>
+    </Setting>
+    <Setting Name="Enum1" Type="OptionTreeView.Option&lt;OptionTreeViewTestApp.ImageType&gt;" Scope="User">
+      <Value Profile="(Default)">1|1_General|1_Enum|This is Enum1</Value>
+    </Setting>
+    <Setting Name="Enum2" Type="OptionTreeView.Option&lt;OptionTreeViewTestApp.ImageType&gt;" Scope="User">
+      <Value Profile="(Default)">Bmp|1_General|1_Enum|This is Enum2</Value>
+    </Setting>
+    <Setting Name="Color1" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+      <Value Profile="(Default)">CornflowerBlue|1_General|2_KnownColor|This is Color1</Value>
+    </Setting>
+    <Setting Name="Color2" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+      <Value Profile="(Default)">DarkSeaGreen|1_General|2_KnownColor|This is Color2</Value>
+    </Setting>
+    <Setting Name="IP" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
+      <Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>
+    </Setting>
+    <Setting Name="PORT" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
+      <Value Profile="(Default)">80|1_General|Z_Connect1|This is PORT</Value>
+    </Setting>
+    <Setting Name="Version" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
+      <Value Profile="(Default)">9.99|1_General|Connect2|This is Version</Value>
+    </Setting>
+    <Setting Name="Type" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
+      <Value Profile="(Default)">TEST|1_General|Connect2|This is Type</Value>
+    </Setting>
+    <Setting Name="Work3" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">true|1_General|Connect3|This is Work3</Value>
+    </Setting>
+    <Setting Name="Work4" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">false|1_General|Connect3|This is Work4</Value>
+    </Setting>
+    <Setting Name="Work5" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">false|1_General|Connect3|This is Work5</Value>
+    </Setting>
+    <Setting Name="Work6" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">true|1_General|Connect3|This is Work6</Value>
+    </Setting>
+    <Setting Name="Work7" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">true|1_General|Connect3|This is Work7</Value>
+    </Setting>
+    <Setting Name="Work8" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">true|1_General|Connect3|This is Work8</Value>
+    </Setting>
+    <Setting Name="Work9" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">false|1_General|Connect3|This is Work9</Value>
+    </Setting>
+    <Setting Name="Setting3" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
+      <Value Profile="(Default)">1.23|1_General|Connect3|This is Setting3</Value>
+    </Setting>
+    <Setting Name="Setting4" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
+      <Value Profile="(Default)">4.56|1_General|Connect3|This is Setting4</Value>
+    </Setting>
+    <Setting Name="Setting5" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
+      <Value Profile="(Default)">7.89|1_General|Connect3|This is Setting5</Value>
+    </Setting>
+    <Setting Name="Setting6" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
+      <Value Profile="(Default)">0.98|1_General|Connect3|This is Setting6</Value>
+    </Setting>
+    <Setting Name="Work1_abcdef123456789_abcdef123456789_abcdef123456789" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">true||Z_Connect1|This is Work1</Value>
+    </Setting>
+    <Setting Name="Work2" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">false||Connect2|This is Work2</Value>
+    </Setting>
+    <Setting Name="Setting1" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
+      <Value Profile="(Default)">123|Other</Value>
+    </Setting>
+    <Setting Name="Setting2" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
+      <Value Profile="(Default)">456|Other</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>
