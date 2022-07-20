@@ -85,6 +85,19 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[FontFamily: Name=Microsoft Sans Serif]|1_General|3_FontFamily|This is FontFamily" +
+            "1")]
+        public global::OptionTreeView.Option<System.Drawing.FontFamily> FontFamily1 {
+            get {
+                return ((global::OptionTreeView.Option<System.Drawing.FontFamily>)(this["FontFamily1"]));
+            }
+            set {
+                this["FontFamily1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.1|1_General|Z_Connect1|This is IP")]
         public global::OptionTreeView.Option<string> IP {
             get {

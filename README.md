@@ -55,7 +55,9 @@ that automatically generates options windows view. (using Settings.settings)
 ### Generic(OptionTreeView.Option) in Settings
 
 - To make the settings have tree and group classification, the type must be changed to `OptionTreeView.Option` generic class.
-- Generic supported types are `sbyte, short, int, long, byte, ushort, uint, ulong, decimal, float, double, Enum, bool, string` and `System.Drawing.KnownColor` for Color Picker ComboBox.
+- Generic supported types are `sbyte, short, int, long, byte, ushort, uint, ulong, decimal, float, double, Enum, bool, string` and
+- `System.Drawing.KnownColor` for Color Picker ComboBox.
+- `System.Drawing.FontFamily` for Font Selector ComboBox.
 - The Settings in the GUI Designer interface cannot set the type to a generic class, but...
 - You can open Settings.settings with `XML(text) Editor`, and insert the generic class inside <Settings>, Refer to [Generic types for Settings.settings](https://stackoverflow.com/a/4046036)
 - The format of the `OptionTreeView.Option` generic class in the setting value is: "value`|`TreeName`|`GroupName`|`Description", use Vertical bar(`|`) to separate text, such as `"100|general|factor|This is Description"`.
@@ -81,6 +83,9 @@ that automatically generates options windows view. (using Settings.settings)
         </Setting>
         <Setting Name="Color2" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
           <Value Profile="(Default)">DarkSeaGreen|1_General|2_KnownColor|This is Color2</Value>
+        </Setting>
+        <Setting Name="FontFamily1" Type="OptionTreeView.Option&lt;System.Drawing.FontFamily&gt;" Scope="User">
+          <Value Profile="(Default)">[FontFamily: Name=Microsoft Sans Serif]|1_General|3_FontFamily|This is FontFamily1</Value>
         </Setting>
         <Setting Name="IP" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
           <Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>

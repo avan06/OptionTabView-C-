@@ -79,6 +79,26 @@ namespace OptionTreeView
                 comboBox.BackColor = itemColor;
             }
         }
+
+        /// <summary>
+        /// Changing the format of a ComboBox item
+        /// https://stackoverflow.com/a/10528683
+        /// </summary>
+        private void FontBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            ComboBox combo = ((ComboBox)sender);
+            using (Graphics g = e.Graphics)
+            using (SolidBrush brush = new SolidBrush(e.ForeColor))
+            {
+                Font font = new Font(combo.Items[e.Index].ToString(), e.Font.Size);
+                e.DrawBackground();
+                g.DrawString(combo.Items[e.Index].ToString(), font, brush, e.Bounds);
+                e.DrawFocusRectangle();
+            }
+
+        }
         #endregion
 
         #region properties Appearance
@@ -445,11 +465,25 @@ namespace OptionTreeView
                     if (enumVal.GetType().Name == "KnownColor")
                     {
                         isKnownColor = true;
-                        ((ComboBox)control).DrawMode = DrawMode.OwnerDrawVariable;
+                        ((ComboBox)control).DrawMode = DrawMode.OwnerDrawFixed;
                         ((ComboBox)control).DrawItem += new DrawItemEventHandler(ColorBox_DrawItem);
                         ((ComboBox)control).SelectedIndexChanged += ColorBox_SelectedIndexChanged;
                     }
                     ((ComboBox)control).SelectedItem = enumVal;
+                    ((ComboBox)control).SelectedIndexChanged += Control_Changed;
+                }
+                else if (option.Value is FontFamily fontFamily)
+                {
+                    control = new ComboBox { FormattingEnabled = true };
+                    control.Tag = option;
+                    foreach (var enumObj in FontFamily.Families)
+                    {
+                        ((ComboBox)control).Items.Add(enumObj.Name);
+                        if (enumObj.Name == fontFamily.Name) ((ComboBox)control).SelectedItem = enumObj.Name;
+                    }
+
+                    ((ComboBox)control).DrawMode = DrawMode.OwnerDrawFixed;
+                    ((ComboBox)control).DrawItem += new DrawItemEventHandler(FontBox_DrawItem);
                     ((ComboBox)control).SelectedIndexChanged += Control_Changed;
                 }
                 else if (option.Value is bool boolVal)
@@ -543,8 +577,13 @@ namespace OptionTreeView
                 else
                 {
                     Type innerType = !optionInstanceType.IsGenericType ? optionInstanceType : optionInstanceType.GetGenericArguments()[0];
-                    TypeConverter innerTypeConverter = TypeDescriptor.GetConverter(innerType);
-                    object newValue = innerTypeConverter.ConvertFrom(newVal.ToString());
+                    object newValue;
+                    if (innerType.Name == "FontFamily") newValue = new FontFamily(newVal.ToString());
+                    else
+                    {
+                        TypeConverter innerTypeConverter = TypeDescriptor.GetConverter(innerType);
+                        newValue = innerTypeConverter.ConvertFrom(newVal.ToString());
+                    }
                     optionInstanceType.GetProperty("Value").SetValue(value, newValue);
                 }
                 if (!Changed) Changed = true;

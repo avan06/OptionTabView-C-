@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace OptionTreeView
 {
@@ -73,7 +75,16 @@ namespace OptionTreeView
             if (!(value is string str)) return base.ConvertFrom(context, culture, value);
 
             string[] parts = str.Split(new char[] { Separator });
-            return (BaseOption)Activator.CreateInstance(TypeOfOptionWithGenericArgument, InnerTypeConverter.ConvertFrom(parts[0]),
+
+            object obj;
+            if (InnerType.Name == "FontFamily")
+            {
+                if (Regex.Match(parts[0], @"\[FontFamily: *Name=([^]]+)\]") is Match m1 && m1.Success) obj = new FontFamily(m1.Groups[1].Value);
+                else obj = new FontFamily(parts[0]);
+            }
+            else obj = InnerTypeConverter.ConvertFrom(parts[0]);
+
+            return (BaseOption)Activator.CreateInstance(TypeOfOptionWithGenericArgument, obj,
                 parts.Length > 1 ? parts[1] : "Default",
                 parts.Length > 2 ? parts[2] : "Default",
                 parts.Length > 3 ? parts[3] : "");

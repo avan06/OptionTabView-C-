@@ -17,6 +17,9 @@
     <Setting Name="Color2" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
       <Value Profile="(Default)">DarkSeaGreen|1_General|2_KnownColor|This is Color2</Value>
     </Setting>
+    <Setting Name="FontFamily1" Type="OptionTreeView.Option&lt;System.Drawing.FontFamily&gt;" Scope="User">
+      <Value Profile="(Default)">[FontFamily: Name=Microsoft Sans Serif]|1_General|3_FontFamily|This is FontFamily1</Value>
+    </Setting>
     <Setting Name="IP" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
       <Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>
     </Setting>
