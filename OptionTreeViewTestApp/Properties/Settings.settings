@@ -72,10 +72,10 @@
       <Value Profile="(Default)">false||Connect2|This is Work2</Value>
     </Setting>
     <Setting Name="Setting1" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-      <Value Profile="(Default)">123|Other</Value>
+      <Value Profile="(Default)">123|Other||This is Setting1</Value>
     </Setting>
     <Setting Name="Setting2" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-      <Value Profile="(Default)">456|Other</Value>
+      <Value Profile="(Default)">456|Other||This is Setting2</Value>
     </Setting>
   </Settings>
 </SettingsFile>

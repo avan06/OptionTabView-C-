@@ -143,6 +143,16 @@ optionTreeView1.InitSettings(Properties.Settings.Default);
 `SortTreeBeforeUnderline`: Determine whether to sort by the values before the underline of tree name. Default is false.  
 `SortGroupBeforeUnderline`: Determine whether to sort by the values before the underline of group name. Default is false.  
 `FloatingPointDecimalPlaces`: Gets or sets the number of decimal places for floating-point numbers.  
+`ShowToolTipDuration`: Gets or sets the number containing the duration, in milliseconds, to display the ToolTip.  
+
+- Layout
+`OptionLeftCollapsed`: Gets or sets a value determining whether OptionLeft is collapsed or expanded.  
+`OptionLeftMinSize`: Gets or sets the minimum distance in pixels of the OptionLeft.  
+`OptionRightCollapsed`: Gets or sets a value determining whether OptionRight is collapsed or expanded.  
+`OptionRightMinSize`: Gets or sets the minimum distance in pixels of the OptionRight.  
+`SplitterDistance`: Gets or sets the location of the splitter, in pixels, from the left or top edge of the SplitContainer.  
+`SplitterIncrement`: Gets or sets a value representing the increment of splitter movement in pixels.  
+`SplitterWidth`: Gets or sets the width of the splitter in pixels.  
 
 
 ### Settings Usage and OptionTreeView.Option Class

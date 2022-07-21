@@ -51,7 +51,6 @@
             this.optionTreeView1.OptionLeftMinSize = 25;
             this.optionTreeView1.OptionRightCollapsed = false;
             this.optionTreeView1.OptionRightMinSize = 25;
-            this.optionTreeView1.ShowDefaultGroupName = false;
             this.optionTreeView1.Size = new System.Drawing.Size(591, 450);
             this.optionTreeView1.SortGroupBeforeUnderline = true;
             this.optionTreeView1.SortTreeBeforeUnderline = true;

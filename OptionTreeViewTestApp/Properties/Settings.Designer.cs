@@ -302,7 +302,7 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("123|Other")]
+        [global::System.Configuration.DefaultSettingValueAttribute("123|Other||This is Setting1")]
         public global::OptionTreeView.Option<int> Setting1 {
             get {
                 return ((global::OptionTreeView.Option<int>)(this["Setting1"]));
@@ -314,7 +314,7 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("456|Other")]
+        [global::System.Configuration.DefaultSettingValueAttribute("456|Other||This is Setting2")]
         public global::OptionTreeView.Option<int> Setting2 {
             get {
                 return ((global::OptionTreeView.Option<int>)(this["Setting2"]));

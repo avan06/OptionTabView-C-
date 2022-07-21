@@ -26,7 +26,7 @@ namespace OptionTreeView
             ToolTip1 = new ToolTip();
             VisiblePanel = null;
             Panels = new List<Panel>();
-            TreeGroupOptions = new List<(object Value, string TreeName, string GroupName, string Name, string Description)>();
+            TreeGroupOptions = new List<(object Value, string TreeName, string GroupName, string Name, string Description, uint Seq)>();
         }
         #endregion
 
@@ -211,8 +211,14 @@ namespace OptionTreeView
         /// <summary>
         /// Gets or sets the number of decimal places for floating-point numbers.
         /// </summary>
-        [Category("Behavior"), Description("Gets or sets the number of decimal places for floating-point numbers."), DefaultValue(true)]
+        [Category("Behavior"), Description("Gets or sets the number of decimal places for floating-point numbers.")]
         public int FloatingPointDecimalPlaces { get; set; } = 2;
+
+        /// <summary>
+        /// Gets or sets the number of decimal places for floating-point numbers.
+        /// </summary>
+        [Category("Behavior"), Description("Gets or sets the number containing the duration, in milliseconds, to display the ToolTip.")]
+        public int ShowToolTipDuration { get; set; } = 10000;
         #endregion
         #region properties Layout
 
@@ -297,7 +303,7 @@ namespace OptionTreeView
         /// Remember the result of parsing the Settings.settings of properties
         /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public List<(object Value, string TreeName, string GroupName, string Name, string Description)> TreeGroupOptions { get; private set; }
+        public List<(object Value, string TreeName, string GroupName, string Name, string Description, uint Seq)> TreeGroupOptions { get; private set; }
         #endregion
 
         #region public method
@@ -310,7 +316,8 @@ namespace OptionTreeView
         public void InitSettings(SettingsBase default_, char OptionTypeSeparator = '|')
         {
             if (default_ == null || default_.Properties.Count == 0) throw new ArgumentException("InitSettings failed: Settings is null", "default_");
-            
+
+            uint seq = 0;
             Default = default_;
             OptionTypeConverter.Separator = OptionTypeSeparator;
 
@@ -341,7 +348,7 @@ namespace OptionTreeView
 
                 if ((oTreeName ?? "") == "") oTreeName = "Default";
                 if ((oGroupName ?? "") == "") oGroupName = ShowDefaultGroupName ? "Default" : "";
-                TreeGroupOptions.Add((oValue, oTreeName, oGroupName, name, oDescription));
+                TreeGroupOptions.Add((oValue, oTreeName, oGroupName, name, oDescription, seq++));
             }
 
             if (TreeGroupOptions.Count == 0) throw new ArgumentException("InitSettings failed: Options count is zero", "default_");
@@ -351,7 +358,9 @@ namespace OptionTreeView
             InitPanels();
         }
 
-        private int CompareMemoryEntry((object Value, string TreeName, string GroupName, string Name, string Description) o1, (object Value, string TreeName, string GroupName, string Name, string Description) o2)
+        private int CompareMemoryEntry(
+            (object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) o1,
+            (object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) o2)
         {
             int result;
             result = o1.TreeName.CompareTo(o2.TreeName);
@@ -360,7 +369,7 @@ namespace OptionTreeView
             result = o1.GroupName.CompareTo(o2.GroupName);
             if (result != 0) return result;
 
-            result = o1.Name.CompareTo(o2.Name);
+            result = o1.Seq.CompareTo(o2.Seq);
             return result;
         }
         #endregion
@@ -373,8 +382,8 @@ namespace OptionTreeView
             TableLayoutPanel TablePanelTop = null;
             TableLayoutPanel TablePanelSub = null;
             GroupBox groupBox = null;
-            (object Value, string TreeName, string GroupName, string Name, string Description) tmpOption = (null, null, null, null, null);
-            foreach ((object Value, string TreeName, string GroupName, string Name, string Description) option in TreeGroupOptions)
+            (object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) tmpOption = (null, null, null, null, null, 0);
+            foreach ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) option in TreeGroupOptions)
             {
                 if (tmpOption.Name == null || tmpOption.TreeName != option.TreeName)
                 { //Create new tree node and TableLayoutPanel when TreeName has changed
@@ -548,15 +557,15 @@ namespace OptionTreeView
         private void Control_MouseHover(object sender, EventArgs e)
         {
             Control control = sender as Control;
-            var option = ((object Value, string TreeName, string GroupName, string Name, string Description))control.Tag;
-            ToolTip1.SetToolTip(control, option.Description);
+            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
+            ToolTip1.Show(option.Description, control, ShowToolTipDuration); //https://stackoverflow.com/a/8225836
         }
 
         private void Control_Changed(object sender, EventArgs e)
         {
             object newVal = null;
             Control control = sender as Control;
-            var option = ((object Value, string TreeName, string GroupName, string Name, string Description))control.Tag;
+            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
             if (control is ComboBox comboBox) newVal = comboBox.SelectedItem;
             else if (control is CheckBox checkBox) newVal = checkBox.Checked;
             else if (control is NumericUpDown numericUpDown) newVal = numericUpDown.Value;
