@@ -321,8 +321,16 @@ namespace OptionTreeView
             Default = default_;
             OptionTypeConverter.Separator = OptionTypeSeparator;
 
-            foreach (SettingsProperty property in Default.Properties)
+            var propertyInfos = Default.GetType().GetProperties();
+
+            foreach (var propInfo in propertyInfos)
             {
+                if (!propInfo.CanWrite) continue;
+
+                SettingsProperty property = Default.Properties[propInfo.Name];
+
+                if (property == null) continue;
+
                 string name = property.Name;
                 object value = Default[name];
                 Type optionInstanceType = property.PropertyType; //value.GetType();
