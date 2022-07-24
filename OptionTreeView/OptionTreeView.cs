@@ -12,8 +12,8 @@ namespace OptionTreeView
     {
         #region Fields
         bool Changed;
-        ToolTip ToolTip1;
-        Panel VisiblePanel;
+        int VisibleIndex;
+        readonly ToolTip ToolTip1;
         readonly List<Panel> Panels;
         #endregion
 
@@ -23,15 +23,21 @@ namespace OptionTreeView
             InitializeComponent();
 
             Changed = false;
+            VisibleIndex = -1;
             ToolTip1 = new ToolTip();
-            VisiblePanel = null;
             Panels = new List<Panel>();
             TreeGroupOptions = new List<(object Value, string TreeName, string GroupName, string Name, string Description, uint Seq)>();
         }
         #endregion
 
         #region Control Event
-        private void OptionTreeView_Load(object sender, EventArgs e) => ParentForm.FormClosing += ParentForm_FormClosing;
+        private void OptionLeftView_AfterSelect(object sender, TreeViewEventArgs e) => DisplayPanel(e.Node.Index);
+
+        private void OptionTreeView_Load(object sender, EventArgs e)
+        {
+            ParentForm.FormClosing += ParentForm_FormClosing;
+            ParentForm.FormClosed += ParentForm_FormClosed;
+        }
 
         private void ParentForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -44,27 +50,72 @@ namespace OptionTreeView
             MessageBox.Show("Save", "OptionTreeView", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private void ParentForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            ToolTip1.RemoveAll();
+            ToolTip1.Dispose();
+            for (int idx = 0; idx < Panels.Count; idx++)
+            {
+                var panel = Panels[idx];
+                if (panel.Controls.Count > 0) RecursiveDispose(panel.Controls[0]);
+                panel.Dispose();
+            }
+            if (Controls.Count > 0) RecursiveDispose(Controls[0]);
+            Panels.Clear();
+            Controls.Clear();
+            TreeGroupOptions.Clear();
+            Dispose(true);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/q/2047012
+        /// </summary>
+        private bool RecursiveDispose(Control ctrl)
+        {
+            try
+            {
+                bool isBreak = true;
+                while (isBreak && ctrl.Controls.Count > 0) isBreak = RecursiveDispose(ctrl.Controls[0]);
+
+                ctrl.MouseHover -= Control_MouseHover;
+                if (ctrl is ComboBox comboBox)
+                {
+                    comboBox.DrawItem -= ColorBox_DrawItem;
+                    comboBox.DrawItem -= FontBox_DrawItem;
+                    comboBox.DrawItem -= new DrawItemEventHandler(ColorBox_DrawItem);
+                    comboBox.DrawItem -= new DrawItemEventHandler(FontBox_DrawItem);
+                    comboBox.SelectedIndexChanged -= ColorBox_SelectedIndexChanged;
+                    comboBox.SelectedIndexChanged -= Control_Changed;
+                }
+                else if (ctrl is CheckBox checkBox) checkBox.CheckedChanged -= Control_Changed;
+                else if (ctrl is TextBox textBox) textBox.Leave -= Control_Changed;
+                else if (ctrl is NumericUpDown upDown) upDown.ValueChanged -= Control_Changed;
+
+                ctrl.Dispose();
+                return true;
+            }
+            catch { return false; }
+        }
+
         /// <summary>
         /// Color Picker Combo Box
         /// https://stackoverflow.com/a/25616698
         /// </summary>
         private void ColorBox_DrawItem(object sender, DrawItemEventArgs e)
         {
-            if (e.Index < 0) return;
+            if (!(sender is ComboBox comboBox) || e.Index < 0) return;
+
+            Rectangle rect = e.Bounds; //Rectangle of item
+            string itemName = comboBox.Items[e.Index].ToString(); //Get item color name
+            Color itemColor = Color.FromName(itemName); //Get instance color from item name
 
             using (Graphics g = e.Graphics)
-            {
-                Rectangle rect = e.Bounds; //Rectangle of item
-                //Get item color name
-                string itemName = ((ComboBox)sender).Items[e.Index].ToString();
-                //Get instance color from item name
-                Color itemColor = Color.FromName(itemName);
-                //Get instance brush with Solid style to draw background
-                Brush brush = new SolidBrush(itemColor);
-                //Draw the background with my brush style and rectangle of item
+            using (Brush brush = new SolidBrush(itemColor)) //Get instance brush with Solid style to draw background
+            using (Font itemFont = new Font(e.Font.FontFamily, e.Font.Size, FontStyle.Bold)) //Get instance a font to draw item name with this style
+            { //Draw the background with my brush style and rectangle of item
                 g.FillRectangle(brush, rect.X, rect.Y, rect.Width, rect.Height);
-                //Get instance a font to draw item name with this style
-                Font itemFont = new Font(e.Font.FontFamily, e.Font.Size, FontStyle.Bold);
                 //Draw the item name
                 g.DrawString(itemName, itemFont, itemColor.GetBrightness() >= 0.4 ? Brushes.Black : Brushes.White, rect.X, rect.Top);
             }
@@ -72,12 +123,11 @@ namespace OptionTreeView
 
         private void ColorBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (sender is ComboBox comboBox && comboBox.SelectedItem is KnownColor knownColor)
-            {
-                Color itemColor = Color.FromKnownColor(knownColor);
-                comboBox.ForeColor = itemColor.GetBrightness() >= 0.4 ? Color.Black : Color.White;
-                comboBox.BackColor = itemColor;
-            }
+            if (!(sender is ComboBox comboBox) || !(comboBox.SelectedItem is KnownColor knownColor)) return;
+
+            Color itemColor = Color.FromKnownColor(knownColor);
+            comboBox.ForeColor = itemColor.GetBrightness() >= 0.4 ? Color.Black : Color.White;
+            comboBox.BackColor = itemColor;
         }
 
         /// <summary>
@@ -86,18 +136,36 @@ namespace OptionTreeView
         /// </summary>
         private void FontBox_DrawItem(object sender, DrawItemEventArgs e)
         {
-            if (e.Index < 0) return;
+            if (!(sender is ComboBox comboBox) || e.Index < 0) return;
 
-            ComboBox combo = ((ComboBox)sender);
             using (Graphics g = e.Graphics)
             using (SolidBrush brush = new SolidBrush(e.ForeColor))
+            using (Font font = new Font(comboBox.Items[e.Index].ToString(), e.Font.Size))
             {
-                Font font = new Font(combo.Items[e.Index].ToString(), e.Font.Size);
-                e.DrawBackground();
-                g.DrawString(combo.Items[e.Index].ToString(), font, brush, e.Bounds);
-                e.DrawFocusRectangle();
+                e.DrawBackground(); //Draw the background of the ComboBox for each item.
+                g.DrawString(comboBox.Items[e.Index].ToString(), font, brush, e.Bounds);
+                e.DrawFocusRectangle(); //If the ComboBox has focus, draw a focus rectangle around the selected item.
             }
+        }
 
+        private void Control_MouseHover(object sender, EventArgs e)
+        {
+            Control control = sender as Control;
+            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
+            ToolTip1.Show(option.Description, control, ShowToolTipDuration); //https://stackoverflow.com/a/8225836
+        }
+
+        private void Control_Changed(object sender, EventArgs e)
+        {
+            object newVal = null;
+            Control control = sender as Control;
+            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
+            if (control is ComboBox comboBox) newVal = comboBox.SelectedItem;
+            else if (control is CheckBox checkBox) newVal = checkBox.Checked;
+            else if (control is NumericUpDown numericUpDown) newVal = numericUpDown.Value;
+            else if (control is TextBox textBox) newVal = textBox.Text;
+
+            if (option.Name.Length > 0 && newVal != null) UpdateSettings(option.Name, newVal);
         }
         #endregion
 
@@ -306,7 +374,6 @@ namespace OptionTreeView
         public List<(object Value, string TreeName, string GroupName, string Name, string Description, uint Seq)> TreeGroupOptions { get; private set; }
         #endregion
 
-        #region public method
         #region Init TreeGroupOptions
         /// <summary>
         /// Parse Settings to TreeGroupOptions list
@@ -361,12 +428,12 @@ namespace OptionTreeView
 
             if (TreeGroupOptions.Count == 0) throw new ArgumentException("InitSettings failed: Options count is zero", "default_");
 
-            TreeGroupOptions.Sort(CompareMemoryEntry);
+            TreeGroupOptions.Sort(CompareTreeGroupOption);
 
             InitPanels();
         }
 
-        private int CompareMemoryEntry(
+        private int CompareTreeGroupOption(
             (object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) o1,
             (object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) o2)
         {
@@ -460,8 +527,9 @@ namespace OptionTreeView
                 label.Tag = option;
                 label.Dock = DockStyle.Fill;
                 label.Padding = new Padding(0, 5, 0, 0);
-                bool isKnownColor = false;
+
                 Control control = null;
+                bool isKnownColor = false;
                 (int DecimalPlaces, decimal Increment, decimal Maximum, decimal Minimum, decimal Value) numeric = (0, 0, 0, 0, 0);
                 if (option.Value is sbyte sbyteVal) numeric = (0, 1, 127, -127, sbyteVal);
                 else if (option.Value is short shortVal) numeric = (0, 1, 0x7FFF, -0x8000, shortVal);
@@ -562,26 +630,6 @@ namespace OptionTreeView
             DisplayPanel(0);
         }
 
-        private void Control_MouseHover(object sender, EventArgs e)
-        {
-            Control control = sender as Control;
-            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
-            ToolTip1.Show(option.Description, control, ShowToolTipDuration); //https://stackoverflow.com/a/8225836
-        }
-
-        private void Control_Changed(object sender, EventArgs e)
-        {
-            object newVal = null;
-            Control control = sender as Control;
-            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
-            if (control is ComboBox comboBox) newVal = comboBox.SelectedItem;
-            else if (control is CheckBox checkBox) newVal = checkBox.Checked;
-            else if (control is NumericUpDown numericUpDown) newVal = numericUpDown.Value;
-            else if (control is TextBox textBox) newVal = textBox.Text;
-
-            if (option.Name.Length > 0 && newVal != null) UpdateSettings(option.Name, newVal);
-        }
-
         private void UpdateSettings(string name, object newVal)
         {
             try
@@ -611,21 +659,19 @@ namespace OptionTreeView
             }
         }
 
-        private void OptionLeftView_AfterSelect(object sender, TreeViewEventArgs e) => DisplayPanel(e.Node.Index);
-
         /// <summary>
         /// Display the appropriate Panel.
         /// </summary>
         private void DisplayPanel(int index)
         {
-            if (Panels.Count < 1 || VisiblePanel == Panels[index]) return; // If this is the same Panel, do nothing.
-            if (VisiblePanel != null) VisiblePanel.Visible = false; // Hide the previously visible Panel.
+            if (Panels.Count < 1 || VisibleIndex != -1 && VisibleIndex == index) return; // If this is the same Panel, do nothing.
+            if (VisibleIndex != -1) Panels[VisibleIndex].Visible = false; // Hide the previously visible Panel.
 
+            VisibleIndex = index;
             Panels[index].Visible = true; // Display the appropriate Panel.
-            VisiblePanel = Panels[index];
-        }
-        #endregion
 
+            GC.Collect();
+        }
         #endregion
     }
 }
