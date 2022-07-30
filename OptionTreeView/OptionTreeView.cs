@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace OptionTreeView
@@ -287,6 +288,24 @@ namespace OptionTreeView
         /// </summary>
         [Category("Behavior"), Description("Gets or sets the number containing the duration, in milliseconds, to display the ToolTip.")]
         public int ShowToolTipDuration { get; set; } = 10000;
+
+        /// <summary>
+        /// Get or set whether to automatically add spaces between CamelCases of GroupName. Default is true.
+        /// </summary>
+        [Category("Behavior"), Description("Get or set whether to automatically add spaces between CamelCases of GroupName. Default is true."), DefaultValue(true)]
+        public bool InsertSpaceOnCamelCaseGroupName { get; set; } = true;
+
+        /// <summary>
+        /// Get or set whether to automatically add spaces between CamelCases of LabelName. Default is true.
+        /// </summary>
+        [Category("Behavior"), Description("Get or set whether to automatically add spaces between CamelCases of LabelName. Default is true."), DefaultValue(true)]
+        public bool InsertSpaceOnCamelCaseLabelName { get; set; } = true;
+
+        /// <summary>
+        /// Get or set whether to automatically add spaces between CamelCases of LabelName. Default is true.
+        /// </summary>
+        [Category("Behavior"), Description("Get or set whether to automatically add spaces between CamelCases and number. Default is false. Example: Abc123DefGhi => Abc 123 Def Ghi"), DefaultValue(true)]
+        public bool InsertSpaceOnCamelCaseNumber { get; set; } = false;
         #endregion
         #region properties Layout
 
@@ -500,7 +519,9 @@ namespace OptionTreeView
                     TablePanelTop.Controls.Add(groupBox);
                     groupBox.ForeColor = base.ForeColor;
                     groupBox.BackColor = base.BackColor;
-                    groupBox.Text = SortGroupBeforeUnderline && option.GroupName.Contains("_") ? option.GroupName.Split(new char[] { '_' }, 2)[1] : option.GroupName;
+
+                    var groupText = SortGroupBeforeUnderline && option.GroupName.Contains("_") ? option.GroupName.Split(new char[] { '_' }, 2)[1] : option.GroupName;
+                    groupBox.Text = InsertSpaceOnCamelCaseGroupName ? InsertSpaceOnCamelCase(groupText) : groupText;
                     groupBox.Dock = DockStyle.Fill;
                     groupBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                     groupBox.AutoSize = true;
@@ -523,7 +544,7 @@ namespace OptionTreeView
                 TablePanelSub.RowCount++;
                 TablePanelSub.RowStyles.Add(new RowStyle());
 
-                label.Text = option.Name;
+                label.Text = InsertSpaceOnCamelCaseLabelName ? InsertSpaceOnCamelCase(option.Name) : option.Name; ;
                 label.Tag = option;
                 label.Dock = DockStyle.Fill;
                 label.Padding = new Padding(0, 5, 0, 0);
@@ -628,6 +649,22 @@ namespace OptionTreeView
             TablePanelTop.PerformLayout();
             Panels.Add(TablePanelTop);
             DisplayPanel(0);
+        }
+
+        /// <summary>
+        /// Splitting Pascal/Camel Case with RegEx Enhancements
+        /// https://www.codeproject.com/Articles/108996/Splitting-Pascal-Camel-Case-with-RegEx-Enhancement
+        /// Insert spaces between words on a camel-cased token
+        /// https://stackoverflow.com/a/5796427
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private string InsertSpaceOnCamelCase(string text)
+        {
+            if (text == null || text.Length <= 2) return text;
+
+            string pattern = InsertSpaceOnCamelCaseNumber ? @"(?<!^)([A-Z][0-9a-z]|(?<=[a-z])[0-9A-Z]|(?<=[0-9])[A-Z])" : @"(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])";
+            return Regex.Replace(text, pattern, " $1");
         }
 
         private void UpdateSettings(string name, object newVal)

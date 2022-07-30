@@ -144,6 +144,9 @@ optionTreeView1.InitSettings(Properties.Settings.Default);
 `SortGroupBeforeUnderline`: Determine whether to sort by the values before the underline of group name. Default is false.  
 `FloatingPointDecimalPlaces`: Gets or sets the number of decimal places for floating-point numbers.  
 `ShowToolTipDuration`: Gets or sets the number containing the duration, in milliseconds, to display the ToolTip.  
+`InsertSpaceOnCamelCaseGroupName`: Get or set whether to automatically add spaces between CamelCases of GroupName. Default is true.  
+`InsertSpaceOnCamelCaseLabelName`: Get or set whether to automatically add spaces between CamelCases of LabelName. Default is true.  
+`InsertSpaceOnCamelCaseNumber`: Get or set whether to automatically add spaces between CamelCases and number. Default is false. Example: Abc123DefGhi => Abc 123 Def Ghi.  
 
 - Layout
 `OptionLeftCollapsed`: Gets or sets a value determining whether OptionLeft is collapsed or expanded.  
