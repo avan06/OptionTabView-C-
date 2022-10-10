@@ -287,7 +287,7 @@ namespace OptionTreeView
         /// Gets or sets the number of decimal places for floating-point numbers.
         /// </summary>
         [Category("Behavior"), Description("Gets or sets the number containing the duration, in milliseconds, to display the ToolTip.")]
-        public int ShowToolTipDuration { get; set; } = 10000;
+        public int ShowToolTipDuration { get; set; } = 15000;
 
         /// <summary>
         /// Get or set whether to automatically add spaces between CamelCases of GroupName. Default is true.
@@ -308,7 +308,6 @@ namespace OptionTreeView
         public bool InsertSpaceOnCamelCaseNumber { get; set; } = false;
         #endregion
         #region properties Layout
-
         /// <summary>
         /// Gets or sets a value determining whether OptionLeft is collapsed or expanded.
         /// </summary>
@@ -348,6 +347,12 @@ namespace OptionTreeView
             get => SplitContainer1.Panel2MinSize;
             set => SplitContainer1.Panel2MinSize = value;
         }
+
+        /// <summary>
+        /// Get or set the Label size in pixels of the OptionRight. Default 150.
+        /// </summary>
+        [Category("Layout"), Description("Get or set the Label size in pixels of the OptionRight. Default 150")]
+        public float OptionRightLabelSize { get; set; } = 150;
 
         /// <summary>
         /// Gets or sets the location of the splitter, in pixels, from the left or top edge of the SplitContainer.
@@ -531,7 +536,7 @@ namespace OptionTreeView
                     groupBox.Controls.Add(TablePanelSub);
                     TablePanelSub.SuspendLayout();
                     TablePanelSub.ColumnCount = 2;
-                    TablePanelSub.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
+                    TablePanelSub.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, OptionRightLabelSize));
                     TablePanelSub.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
                     TablePanelSub.Dock = DockStyle.Fill;
                     TablePanelSub.AutoSize = true;
@@ -544,7 +549,8 @@ namespace OptionTreeView
                 TablePanelSub.RowCount++;
                 TablePanelSub.RowStyles.Add(new RowStyle());
 
-                label.Text = InsertSpaceOnCamelCaseLabelName ? InsertSpaceOnCamelCase(option.Name) : option.Name; ;
+                label.Text = InsertSpaceOnCamelCaseLabelName ? InsertSpaceOnCamelCase(option.Name) : option.Name;
+                label.AutoSize = true;
                 label.Tag = option;
                 label.Dock = DockStyle.Fill;
                 label.Padding = new Padding(0, 5, 0, 0);

@@ -153,6 +153,7 @@ optionTreeView1.InitSettings(Properties.Settings.Default);
 `OptionLeftMinSize`: Gets or sets the minimum distance in pixels of the OptionLeft.  
 `OptionRightCollapsed`: Gets or sets a value determining whether OptionRight is collapsed or expanded.  
 `OptionRightMinSize`: Gets or sets the minimum distance in pixels of the OptionRight.  
+`OptionRightLabelSize`: Get or set the Label size in pixels of the OptionRight. Default 150.  
 `SplitterDistance`: Gets or sets the location of the splitter, in pixels, from the left or top edge of the SplitContainer.  
 `SplitterIncrement`: Gets or sets a value representing the increment of splitter movement in pixels.  
 `SplitterWidth`: Gets or sets the width of the splitter in pixels.  
