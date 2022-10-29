@@ -60,7 +60,10 @@ that automatically generates options windows view. (using Settings.settings)
 - `System.Drawing.FontFamily` for Font Selector ComboBox.
 - The Settings in the GUI Designer interface cannot set the type to a generic class, but...
 - You can open Settings.settings with `XML(text) Editor`, and insert the generic class inside <Settings>, Refer to [Generic types for Settings.settings](https://stackoverflow.com/a/4046036)
-- The format of the `OptionTreeView.Option` generic class in the setting value is: "value`|`TreeName`|`GroupName`|`Description", use Vertical bar(`|`) to separate text, such as `"100|general|factor|This is Description"`.
+- The format of the `OptionTreeView.Option` generic class in the setting value is: "value`|`TreeName`|`GroupName`|`Description`|`MinValue`|`MaxValue", use Vertical bar(`|`) to separate text, such as 
+`"100|general|factor|This is Description"`  
+`"100|general|factor|This is Description|-100|200"`  
+- MinValue and MaxValue define the range of Value, which can be omitted.
 
 ![Settings.settingsXML](assets/Settings.settingsXML.webp)
 
@@ -68,41 +71,41 @@ that automatically generates options windows view. (using Settings.settings)
 
 ```xml
 <SettingsFile ...>
-    <Settings>
-        <Setting Name="strKey" Type="System.String" Scope="User">
-          <Value Profile="(Default)">ValueKey123</Value>
-        </Setting>
-        <Setting Name="Enum1" Type="OptionTreeView.Option&lt;OptionTreeViewTestApp.ImageType&gt;" Scope="User">
-          <Value Profile="(Default)">1|1_General|1_Enum|This is Enum1</Value>
-        </Setting>
-        <Setting Name="Enum2" Type="OptionTreeView.Option&lt;OptionTreeViewTestApp.ImageType&gt;" Scope="User">
-          <Value Profile="(Default)">Bmp|1_General|1_Enum|This is Enum2</Value>
-        </Setting>
-        <Setting Name="Color1" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
-          <Value Profile="(Default)">CornflowerBlue|1_General|2_KnownColor|This is Color1</Value>
-        </Setting>
-        <Setting Name="Color2" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
-          <Value Profile="(Default)">DarkSeaGreen|1_General|2_KnownColor|This is Color2</Value>
-        </Setting>
-        <Setting Name="FontFamily1" Type="OptionTreeView.Option&lt;System.Drawing.FontFamily&gt;" Scope="User">
-          <Value Profile="(Default)">[FontFamily: Name=Microsoft Sans Serif]|1_General|3_FontFamily|This is FontFamily1</Value>
-        </Setting>
-        <Setting Name="IP" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
-          <Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>
-        </Setting>
-        <Setting Name="PORT" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-          <Value Profile="(Default)">80|1_General|Z_Connect1|This is PORT</Value>
-        </Setting>
-        <Setting Name="Version" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
-          <Value Profile="(Default)">9.99|1_General|Connect2|This is Version</Value>
-        </Setting>
-        <Setting Name="Type" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
-          <Value Profile="(Default)">TEST|1_General|Connect2|This is Type</Value>
-        </Setting>
-        <Setting Name="Work3" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
-          <Value Profile="(Default)">true|1_General|Connect3|This is Work3</Value>
-        </Setting>
-    </Settings>
+  <Settings>
+    <Setting Name="strKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ValueKey123</Value>
+    </Setting>
+    <Setting Name="Enum1" Type="OptionTreeView.Option&lt;OptionTreeViewTestApp.ImageType&gt;" Scope="User">
+      <Value Profile="(Default)">1|1_General|1_Enum|This is Enum1</Value>
+    </Setting>
+    <Setting Name="Enum2" Type="OptionTreeView.Option&lt;OptionTreeViewTestApp.ImageType&gt;" Scope="User">
+      <Value Profile="(Default)">Bmp|1_General|1_Enum|This is Enum2</Value>
+    </Setting>
+    <Setting Name="Color1" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+      <Value Profile="(Default)">CornflowerBlue|1_General|2_KnownColor|This is Color1</Value>
+    </Setting>
+    <Setting Name="Color2" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+      <Value Profile="(Default)">DarkSeaGreen|1_General|2_KnownColor|This is Color2</Value>
+    </Setting>
+    <Setting Name="FontFamily1" Type="OptionTreeView.Option&lt;System.Drawing.FontFamily&gt;" Scope="User">
+      <Value Profile="(Default)">[FontFamily: Name=Microsoft Sans Serif]|1_General|3_FontFamily|This is FontFamily1</Value>
+    </Setting>
+    <Setting Name="IP" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
+      <Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>
+    </Setting>
+    <Setting Name="PORT" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
+      <Value Profile="(Default)">80|1_General|Z_Connect1|This is PORT|0|10000</Value>
+    </Setting>
+    <Setting Name="Version" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
+      <Value Profile="(Default)">9.99|1_General|Connect2|This is Version|0.5|10.5</Value>
+    </Setting>
+    <Setting Name="Type" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
+      <Value Profile="(Default)">TEST|1_General|Connect2|This is Type</Value>
+    </Setting>
+    <Setting Name="Work3" Type="OptionTreeView.Option&lt;bool&gt;" Scope="User">
+      <Value Profile="(Default)">true|1_General|Connect3|This is Work3</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>
 ```
 
@@ -174,25 +177,38 @@ Properties.Settings.Default.Save();
 
 - OptionTreeView.Option Class  
 ```cs
-public class Option<T> : BaseOption
+public class Option<dynamic> : BaseOption
 {
-    public T Value { get => (T)BaseObject; set => BaseObject = value; }
-    public Option(T value, string treeName = "Default", string groupName = "Default", string description = "") : base(value, treeName, groupName, description) { }
-    public override string ToString() => Value == null ? "" : Value.ToString();
+  public dynamic Value
+  {
+    get => (dynamic)BaseObject;
+    set
+    {
+      if (MinObject != null && MinObject.GetType().Name != "String" && value < MinObject) value = MinObject;
+      if (MaxObject != null && MaxObject.GetType().Name != "String" && value > MaxObject) value = MaxObject;
+      BaseObject = value;
+    }
+  }
+  public Option(dynamic value, string treeName = "Default", string groupName = "Default", string description = "", object minObject = null, object maxObject = null) : base(value, treeName, groupName, description, minObject, maxObject) { }
+  public override string ToString() => Value == null ? "" : Value.ToString();
 }
     
 public class BaseOption
 {
-    public Object BaseObject { get; set; }
+    public dynamic BaseObject { get; set; }
     public string TreeName { get; private set; }
     public string GroupName { get; private set; }
     public string Description { get; private set; }
-    public BaseOption(Object baseObject, string treeName, string groupName, string description)
+    public dynamic MinObject { get; private set; }
+    public dynamic MaxObject { get; private set; }
+    public BaseOption(dynamic baseObject, string treeName, string groupName, string description, dynamic minObject, dynamic maxObject)
     {
-        BaseObject = baseObject;
-        TreeName = treeName;
-        GroupName = groupName;
-        Description = description;
+      BaseObject = baseObject;
+      TreeName = treeName;
+      GroupName = groupName;
+      Description = description;
+      MinObject = minObject;
+      MaxObject = maxObject;
     }
 }
 ```

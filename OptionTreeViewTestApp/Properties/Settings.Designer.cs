@@ -110,7 +110,7 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("80|1_General|Z_Connect1|This is PORT")]
+        [global::System.Configuration.DefaultSettingValueAttribute("80|1_General|Z_Connect1|This is PORT|0|10000")]
         public global::OptionTreeView.Option<int> PORT {
             get {
                 return ((global::OptionTreeView.Option<int>)(this["PORT"]));
@@ -122,7 +122,7 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("9.99|1_General|Connect2|This is Version")]
+        [global::System.Configuration.DefaultSettingValueAttribute("9.99|1_General|Connect2|This is Version|0.5|10.5")]
         public global::OptionTreeView.Option<float> Version {
             get {
                 return ((global::OptionTreeView.Option<float>)(this["Version"]));
@@ -302,7 +302,7 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("123|Other||This is Setting1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("123|Other||This is Setting1|-100|400")]
         public global::OptionTreeView.Option<int> Setting1 {
             get {
                 return ((global::OptionTreeView.Option<int>)(this["Setting1"]));
@@ -314,7 +314,7 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("456|Other||This is Setting2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("456|Other||This is Setting2|400|9999")]
         public global::OptionTreeView.Option<int> Setting2 {
             get {
                 return ((global::OptionTreeView.Option<int>)(this["Setting2"]));

@@ -24,10 +24,10 @@
       <Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>
     </Setting>
     <Setting Name="PORT" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-      <Value Profile="(Default)">80|1_General|Z_Connect1|This is PORT</Value>
+      <Value Profile="(Default)">80|1_General|Z_Connect1|This is PORT|0|10000</Value>
     </Setting>
     <Setting Name="Version" Type="OptionTreeView.Option&lt;float&gt;" Scope="User">
-      <Value Profile="(Default)">9.99|1_General|Connect2|This is Version</Value>
+      <Value Profile="(Default)">9.99|1_General|Connect2|This is Version|0.5|10.5</Value>
     </Setting>
     <Setting Name="Type" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
       <Value Profile="(Default)">TEST|1_General|Connect2|This is Type</Value>
@@ -72,10 +72,10 @@
       <Value Profile="(Default)">false||Connect2|This is Work2</Value>
     </Setting>
     <Setting Name="Setting1" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-      <Value Profile="(Default)">123|Other||This is Setting1</Value>
+      <Value Profile="(Default)">123|Other||This is Setting1|-100|400</Value>
     </Setting>
     <Setting Name="Setting2" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
-      <Value Profile="(Default)">456|Other||This is Setting2</Value>
+      <Value Profile="(Default)">456|Other||This is Setting2|400|9999</Value>
     </Setting>
   </Settings>
 </SettingsFile>

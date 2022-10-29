@@ -8,16 +8,20 @@ namespace OptionTreeView
 {
     public class BaseOption
     {
-        public Object BaseObject { get; set; }
+        public dynamic BaseObject { get; set; }
         public string TreeName { get; private set; }
         public string GroupName { get; private set; }
         public string Description { get; private set; }
-        public BaseOption(Object baseObject, string treeName, string groupName, string description)
+        public dynamic MinObject { get; private set; }
+        public dynamic MaxObject { get; private set; }
+        public BaseOption(dynamic baseObject, string treeName, string groupName, string description, dynamic minObject, dynamic maxObject)
         {
             BaseObject = baseObject;
             TreeName = treeName;
             GroupName = groupName;
             Description = description;
+            MinObject = minObject;
+            MaxObject = maxObject;
         }
     }
 
@@ -31,10 +35,19 @@ namespace OptionTreeView
     /// </summary>
     [TypeConverter(typeof(OptionTypeConverter))]
     [SettingsSerializeAs(SettingsSerializeAs.String)]
-    public class Option<T> : BaseOption
+    public class Option<dynamic> : BaseOption
     {
-        public T Value { get => (T)BaseObject; set => BaseObject = value; }
-        public Option(T value, string treeName = "Default", string groupName = "Default", string description = "") : base(value, treeName, groupName, description) { }
+        public dynamic Value
+        {
+            get => (dynamic)BaseObject;
+            set
+            {
+                if (MinObject != null && MinObject.GetType().Name != "String" && value < MinObject) value = MinObject;
+                if (MaxObject != null && MaxObject.GetType().Name != "String" && value > MaxObject) value = MaxObject;
+                BaseObject = value;
+            }
+        }
+        public Option(dynamic value, string treeName = "Default", string groupName = "Default", string description = "", object minObject = null, object maxObject = null) : base(value, treeName, groupName, description, minObject, maxObject) { }
         public override string ToString() => Value == null ? "" : Value.ToString();
     }
 
@@ -76,18 +89,23 @@ namespace OptionTreeView
 
             string[] parts = str.Split(new char[] { Separator });
 
-            object obj;
+            object obj, minObj = null, maxObj = null;
             if (InnerType.Name == "FontFamily")
             {
                 if (Regex.Match(parts[0], @"\[FontFamily: *Name=([^]]+)\]") is Match m1 && m1.Success) obj = new FontFamily(m1.Groups[1].Value);
                 else obj = new FontFamily(parts[0]);
             }
-            else obj = InnerTypeConverter.ConvertFrom(parts[0]);
+            else
+            {
+                obj = InnerTypeConverter.ConvertFrom(parts[0]);
+                minObj = (parts.Length > 4 && parts[4] != "") ? InnerTypeConverter.ConvertFrom(parts[4]) : null;
+                maxObj = (parts.Length > 5 && parts[5] != "") ? InnerTypeConverter.ConvertFrom(parts[5]) : null;
+            }
 
             return (BaseOption)Activator.CreateInstance(TypeOfOptionWithGenericArgument, obj,
                 parts.Length > 1 ? parts[1] : "Default",
                 parts.Length > 2 ? parts[2] : "Default",
-                parts.Length > 3 ? parts[3] : "");
+                parts.Length > 3 ? parts[3] : "", minObj, maxObj);
         }
 
         /// <summary>
@@ -99,11 +117,13 @@ namespace OptionTreeView
             if (destinationType != typeof(string) || !GenericInstanceType.IsGenericType || GenericInstanceType.GetGenericTypeDefinition() != typeof(Option<>))
                 return base.ConvertTo(context, culture, value, destinationType);
 
-            return string.Format("{0}" + Separator + "{1}" + Separator + "{2}" + Separator + "{3}",
+            return string.Format("{0}" + Separator + "{1}" + Separator + "{2}" + Separator + "{3}" + Separator + "{4}" + Separator + "{5}",
                 GenericInstanceType.GetProperty("Value").GetValue(value, null),
                 GenericInstanceType.GetProperty("TreeName").GetValue(value, null),
                 GenericInstanceType.GetProperty("GroupName").GetValue(value, null),
-                GenericInstanceType.GetProperty("Description").GetValue(value, null));
+                GenericInstanceType.GetProperty("Description").GetValue(value, null),
+                GenericInstanceType.GetProperty("MinObject").GetValue(value, null),
+                GenericInstanceType.GetProperty("MaxObject").GetValue(value, null));
         }
     }
 }
