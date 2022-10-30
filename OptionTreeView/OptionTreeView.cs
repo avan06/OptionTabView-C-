@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Drawing;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -16,6 +17,20 @@ namespace OptionTreeView
         int VisibleIndex;
         readonly ToolTip ToolTip1;
         readonly List<Panel> Panels;
+        readonly object[] rgbs = new object[] { //RGB color codes chart
+            "330000", "660000", "990000", "CC0000", "FF0000", "FF3333", "FF6666", "FF9999", "FFCCCC",
+            "331900", "663300", "994C00", "CC6600", "FF8000", "FF9933", "FFB266", "FFCC99", "FFE5CC",
+            "333300", "666600", "999900", "CCCC00", "FFFF00", "FFFF33", "FFFF66", "FFFF99", "FFFFCC",
+            "193300", "336600", "4C9900", "66CC00", "80FF00", "99FF33", "B2FF66", "CCFF99", "E5FFCC",
+            "003300", "006600", "009900", "00CC00", "00FF00", "33FF33", "66FF66", "99FF99", "CCFFCC",
+            "003319", "006633", "00994C", "00CC66", "00FF80", "33FF99", "66FFB2", "99FFCC", "CCFFE5",
+            "003333", "006666", "009999", "00CCCC", "00FFFF", "33FFFF", "66FFFF", "99FFFF", "CCFFFF",
+            "001933", "003366", "004C99", "0066CC", "0080FF", "3399FF", "66B2FF", "99CCFF", "CCE5FF",
+            "000033", "000066", "000099", "0000CC", "0000FF", "3333FF", "6666FF", "9999FF", "CCCCFF",
+            "190033", "330066", "4C0099", "6600CC", "7F00FF", "9933FF", "B266FF", "CC99FF", "E5CCFF",
+            "330033", "660066", "990099", "CC00CC", "FF00FF", "FF33FF", "FF66FF", "FF99FF", "FFCCFF",
+            "330019", "660033", "99004C", "CC0066", "FF007F", "FF3399", "FF66B2", "FF99CC", "FFCCE5",
+            "000000", "202020", "404040", "606060", "808080", "A0A0A0", "C0C0C0", "E0E0E0", "FFFFFF"};
         #endregion
 
         #region Constructors
@@ -88,11 +103,16 @@ namespace OptionTreeView
                     comboBox.DrawItem -= new DrawItemEventHandler(ColorBox_DrawItem);
                     comboBox.DrawItem -= new DrawItemEventHandler(FontBox_DrawItem);
                     comboBox.SelectedIndexChanged -= ColorBox_SelectedIndexChanged;
+                    comboBox.SelectedIndexChanged -= ColorNum_ValueChanged;
                     comboBox.SelectedIndexChanged -= Control_Changed;
                 }
                 else if (ctrl is CheckBox checkBox) checkBox.CheckedChanged -= Control_Changed;
                 else if (ctrl is TextBox textBox) textBox.Leave -= Control_Changed;
-                else if (ctrl is NumericUpDown upDown) upDown.ValueChanged -= Control_Changed;
+                else if (ctrl is NumericUpDown upDown)
+                {
+                    upDown.ValueChanged -= Control_Changed;
+                    upDown.ValueChanged -= ColorNum_ValueChanged;
+                }
 
                 ctrl.Dispose();
                 return true;
@@ -110,7 +130,9 @@ namespace OptionTreeView
 
             Rectangle rect = e.Bounds; //Rectangle of item
             string itemName = comboBox.Items[e.Index].ToString(); //Get item color name
-            Color itemColor = Color.FromName(itemName); //Get instance color from item name
+            bool isARGB = uint.TryParse(itemName, NumberStyles.HexNumber, null, out uint argb);
+            if (argb < 0xFF000000) argb += 0xFF000000;
+            Color itemColor = isARGB ? Color.FromArgb((int)argb) : Color.FromName(itemName); //Get instance color from item name
 
             using (Graphics g = e.Graphics)
             using (Brush brush = new SolidBrush(itemColor)) //Get instance brush with Solid style to draw background
@@ -167,6 +189,32 @@ namespace OptionTreeView
             else if (control is TextBox textBox) newVal = textBox.Text;
 
             if (option.Name.Length > 0 && newVal != null) UpdateSettings(option.Name, newVal);
+        }
+
+        private void ColorNum_ValueChanged(object sender, EventArgs e)
+        {
+            Control control = sender as Control;
+            bool isComboBox = control is ComboBox;
+            var ColorR = control.Parent.Controls.Find("ColorR", false)[0] as NumericUpDown;
+            var ColorG = control.Parent.Controls.Find("ColorG", false)[0] as NumericUpDown;
+            var ColorB = control.Parent.Controls.Find("ColorB", false)[0] as NumericUpDown;
+            var ColorBox = control.Parent.Controls.Find("ColorBox", false)[0] as ComboBox;
+
+            if (isComboBox)
+            {
+                uint argb = uint.Parse(ColorBox.SelectedItem.ToString(), NumberStyles.HexNumber);
+                if (argb < 0xFF000000) argb += 0xFF000000;
+
+                Color color = Color.FromArgb((int)argb);
+                ColorR.Value = color.R;
+                ColorG.Value = color.G;
+                ColorB.Value = color.B;
+            }
+            ColorBox.BackColor = Color.FromArgb((int)ColorR.Value, (int)ColorG.Value, (int)ColorB.Value);
+            if (!isComboBox) ColorBox.Text = ColorBox.BackColor.ToArgb().ToString("X");
+
+            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Parent.Tag;
+            if (option.Name.Length > 0) UpdateSettings(option.Name, ColorBox.BackColor);
         }
         #endregion
 
@@ -481,6 +529,7 @@ namespace OptionTreeView
             TableLayoutPanel TablePanelTop = null;
             TableLayoutPanel TablePanelSub = null;
             GroupBox groupBox = null;
+            Font numFont = new Font(Font.FontFamily, 8, FontStyle.Bold);
             (object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) tmpOption = (null, null, null, null, null, 0);
             foreach ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) option in TreeGroupOptions)
             {
@@ -583,6 +632,57 @@ namespace OptionTreeView
                     }
                     ((ComboBox)control).SelectedItem = enumVal;
                     ((ComboBox)control).SelectedIndexChanged += Control_Changed;
+                }
+                else if (option.Value is Color color)
+                {
+                    var numR = new NumericUpDown() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.R };
+                    var numG = new NumericUpDown() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.G };
+                    var numB = new NumericUpDown() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.B };
+                    numR.ValueChanged += ColorNum_ValueChanged;
+                    numG.ValueChanged += ColorNum_ValueChanged;
+                    numB.ValueChanged += ColorNum_ValueChanged;
+                    numR.Name = "ColorR";
+                    numG.Name = "ColorG";
+                    numB.Name = "ColorB";
+                    numR.Dock = DockStyle.Fill;
+                    numG.Dock = DockStyle.Fill;
+                    numB.Dock = DockStyle.Fill;
+                    numR.Margin = new Padding(0, 3, 0, 0);
+                    numG.Margin = new Padding(0, 3, 0, 0);
+                    numB.Margin = new Padding(0, 3, 0, 0);
+                    numR.Font = numFont;
+                    numG.Font = numFont;
+                    numB.Font = numFont;
+                    ComboBox colorBox = new ComboBox { FormattingEnabled = true };
+                    colorBox.DrawMode = DrawMode.OwnerDrawFixed;
+                    colorBox.DrawItem += new DrawItemEventHandler(ColorBox_DrawItem);
+                    colorBox.SelectedIndexChanged += ColorNum_ValueChanged;
+                    colorBox.FlatStyle = FlatStyle.Popup;
+                    colorBox.Items.AddRange(rgbs);
+                    colorBox.Name = "ColorBox";
+                    colorBox.Dock = DockStyle.Fill;
+                    colorBox.Margin = new Padding(0, 3, 0, 0);
+                    if (color != default) colorBox.BackColor = color;
+
+                    var TablePanelControl = new TableLayoutPanel();
+                    TablePanelControl.Size = new Size(100, colorBox.Height);
+                    TablePanelControl.SuspendLayout();
+                    TablePanelControl.ColumnCount = 4;
+                    TablePanelControl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+                    TablePanelControl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+                    TablePanelControl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+                    TablePanelControl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+                    TablePanelControl.Tag = option;
+                    TablePanelControl.Controls.Add(numR);
+                    TablePanelControl.Controls.Add(numG);
+                    TablePanelControl.Controls.Add(numB);
+                    TablePanelControl.Controls.Add(colorBox);
+
+                    TablePanelControl.ResumeLayout(false);
+                    TablePanelControl.PerformLayout();
+
+                    control = TablePanelControl;
+
                 }
                 else if (option.Value is FontFamily fontFamily)
                 {
@@ -687,6 +787,7 @@ namespace OptionTreeView
                     Type innerType = !optionInstanceType.IsGenericType ? optionInstanceType : optionInstanceType.GetGenericArguments()[0];
                     object newValue;
                     if (innerType.Name == "FontFamily") newValue = new FontFamily(newVal.ToString());
+                    else if (innerType.Name == "Color") newValue = (Color)newVal;
                     else
                     {
                         TypeConverter innerTypeConverter = TypeDescriptor.GetConverter(innerType);

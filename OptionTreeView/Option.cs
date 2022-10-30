@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Configuration;
 using System.Drawing;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace OptionTreeView
@@ -91,9 +92,12 @@ namespace OptionTreeView
 
             object obj, minObj = null, maxObj = null;
             if (InnerType.Name == "FontFamily")
+                obj = Regex.Match(parts[0], @"\[FontFamily: *Name=([^]]+)\]") is Match m1 && m1.Success ? new FontFamily(m1.Groups[1].Value) : new FontFamily(parts[0]);
+            else if (InnerType.Name == "Color")
             {
-                if (Regex.Match(parts[0], @"\[FontFamily: *Name=([^]]+)\]") is Match m1 && m1.Success) obj = new FontFamily(m1.Groups[1].Value);
-                else obj = new FontFamily(parts[0]);
+                bool isARGB = uint.TryParse(parts[0], NumberStyles.HexNumber, null, out uint argb);
+                if (argb < 0xFF000000) argb += 0xFF000000;
+                obj = isARGB ? Color.FromArgb((int)argb) : Color.FromName(parts[0]);
             }
             else
             {
@@ -117,8 +121,11 @@ namespace OptionTreeView
             if (destinationType != typeof(string) || !GenericInstanceType.IsGenericType || GenericInstanceType.GetGenericTypeDefinition() != typeof(Option<>))
                 return base.ConvertTo(context, culture, value, destinationType);
 
+            var newVal = GenericInstanceType.GetProperty("Value").GetValue(value, null);
+            if (InnerType.Name == "Color") newVal = ((Color)newVal).ToArgb().ToString("X");
+
             return string.Format("{0}" + Separator + "{1}" + Separator + "{2}" + Separator + "{3}" + Separator + "{4}" + Separator + "{5}",
-                GenericInstanceType.GetProperty("Value").GetValue(value, null),
+                newVal,
                 GenericInstanceType.GetProperty("TreeName").GetValue(value, null),
                 GenericInstanceType.GetProperty("GroupName").GetValue(value, null),
                 GenericInstanceType.GetProperty("Description").GetValue(value, null),

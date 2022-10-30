@@ -56,6 +56,7 @@ that automatically generates options windows view. (using Settings.settings)
 
 - To make the settings have tree and group classification, the type must be changed to `OptionTreeView.Option` generic class.
 - Generic supported types are `sbyte, short, int, long, byte, ushort, uint, ulong, decimal, float, double, Enum, bool, string` and
+- `System.Drawing.Color` for Color Selector ComboBox.
 - `System.Drawing.KnownColor` for Color Picker ComboBox.
 - `System.Drawing.FontFamily` for Font Selector ComboBox.
 - The Settings in the GUI Designer interface cannot set the type to a generic class, but...
@@ -82,10 +83,16 @@ that automatically generates options windows view. (using Settings.settings)
       <Value Profile="(Default)">Bmp|1_General|1_Enum|This is Enum2</Value>
     </Setting>
     <Setting Name="Color1" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
-      <Value Profile="(Default)">CornflowerBlue|1_General|2_KnownColor|This is Color1</Value>
+      <Value Profile="(Default)">CornflowerBlue|1_General|2_KnownColor|This is KnownColor1</Value>
     </Setting>
     <Setting Name="Color2" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
-      <Value Profile="(Default)">DarkSeaGreen|1_General|2_KnownColor|This is Color2</Value>
+      <Value Profile="(Default)">DarkSeaGreen|1_General|2_KnownColor|This is KnownColor2</Value>
+    </Setting>
+    <Setting Name="Color3" Type="OptionTreeView.Option&lt;System.Drawing.Color&gt;" Scope="User">
+      <Value Profile="(Default)">DarkSeaGreen|1_General|2_KnownColor|This is Color1</Value>
+    </Setting>
+    <Setting Name="Color4" Type="OptionTreeView.Option&lt;System.Drawing.Color&gt;" Scope="User">
+      <Value Profile="(Default)">99B4D1|1_General|2_KnownColor|This is Color2</Value>
     </Setting>
     <Setting Name="FontFamily1" Type="OptionTreeView.Option&lt;System.Drawing.FontFamily&gt;" Scope="User">
       <Value Profile="(Default)">[FontFamily: Name=Microsoft Sans Serif]|1_General|3_FontFamily|This is FontFamily1</Value>

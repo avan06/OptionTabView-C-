@@ -61,7 +61,7 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("CornflowerBlue|1_General|2_KnownColor|This is Color1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("CornflowerBlue|1_General|2_KnownColor|This is KnownColor1")]
         public global::OptionTreeView.Option<System.Drawing.KnownColor> Color1 {
             get {
                 return ((global::OptionTreeView.Option<System.Drawing.KnownColor>)(this["Color1"]));
@@ -73,13 +73,37 @@ namespace OptionTreeViewTestApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DarkSeaGreen|1_General|2_KnownColor|This is Color2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DarkSeaGreen|1_General|2_KnownColor|This is KnownColor2")]
         public global::OptionTreeView.Option<System.Drawing.KnownColor> Color2 {
             get {
                 return ((global::OptionTreeView.Option<System.Drawing.KnownColor>)(this["Color2"]));
             }
             set {
                 this["Color2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("DarkSeaGreen|1_General|2_KnownColor|This is Color1")]
+        public global::OptionTreeView.Option<System.Drawing.Color> Color3 {
+            get {
+                return ((global::OptionTreeView.Option<System.Drawing.Color>)(this["Color3"]));
+            }
+            set {
+                this["Color3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("99B4D1|1_General|2_KnownColor|This is Color2")]
+        public global::OptionTreeView.Option<System.Drawing.Color> Color4 {
+            get {
+                return ((global::OptionTreeView.Option<System.Drawing.Color>)(this["Color4"]));
+            }
+            set {
+                this["Color4"] = value;
             }
         }
         
