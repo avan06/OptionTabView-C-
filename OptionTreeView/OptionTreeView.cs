@@ -131,7 +131,7 @@ namespace OptionTreeView
             Rectangle rect = e.Bounds; //Rectangle of item
             string itemName = comboBox.Items[e.Index].ToString(); //Get item color name
             bool isARGB = uint.TryParse(itemName, NumberStyles.HexNumber, null, out uint argb);
-            if (argb < 0xFF000000) argb += 0xFF000000;
+            if (argb < 0x01000000) argb += 0xFF000000;
             Color itemColor = isARGB ? Color.FromArgb((int)argb) : Color.FromName(itemName); //Get instance color from item name
 
             using (Graphics g = e.Graphics)
@@ -203,7 +203,7 @@ namespace OptionTreeView
             if (isComboBox)
             {
                 uint argb = uint.Parse(ColorBox.SelectedItem.ToString(), NumberStyles.HexNumber);
-                if (argb < 0xFF000000) argb += 0xFF000000;
+                if (argb < 0x01000000) argb += 0xFF000000;
 
                 Color color = Color.FromArgb((int)argb);
                 ColorR.Value = color.R;

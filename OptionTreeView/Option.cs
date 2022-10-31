@@ -96,7 +96,7 @@ namespace OptionTreeView
             else if (InnerType.Name == "Color")
             {
                 bool isARGB = uint.TryParse(parts[0], NumberStyles.HexNumber, null, out uint argb);
-                if (argb < 0xFF000000) argb += 0xFF000000;
+                if (argb < 0x01000000) argb += 0xFF000000;
                 obj = isARGB ? Color.FromArgb((int)argb) : Color.FromName(parts[0]);
             }
             else
