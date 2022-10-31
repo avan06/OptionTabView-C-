@@ -653,7 +653,7 @@ namespace OptionTreeView
                     numR.Font = numFont;
                     numG.Font = numFont;
                     numB.Font = numFont;
-                    ComboBox colorBox = new ComboBox { FormattingEnabled = true };
+                    ComboBoxTransparent colorBox = new ComboBoxTransparent { FormattingEnabled = true };
                     colorBox.DrawMode = DrawMode.OwnerDrawFixed;
                     colorBox.DrawItem += new DrawItemEventHandler(ColorBox_DrawItem);
                     colorBox.SelectedIndexChanged += ColorNum_ValueChanged;
@@ -817,5 +817,16 @@ namespace OptionTreeView
             GC.Collect();
         }
         #endregion
+
+        /// <summary>
+        /// Customize a ComboBox that supports SupportsTransparentBackColor
+        /// </summary>
+        public class ComboBoxTransparent : ComboBox
+        {
+            /// <summary>
+            /// Avoid throwing transparent back color not allowed error
+            /// </summary>
+            public ComboBoxTransparent() => SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+        }
     }
 }
