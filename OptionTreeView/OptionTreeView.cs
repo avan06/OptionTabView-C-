@@ -73,7 +73,11 @@ namespace OptionTreeView
             SelectNextControl((Control)sender, true, true, true, true); //Move the focus before closing to confirm whether there is an option in editing
             if (!Changed) return;
 
-            if (MessageBox.Show("Do you want to save settings before leaving??", "OptionFormClosing", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            if (MessageBox.Show("Do you want to save settings before leaving??", "OptionFormClosing", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            {
+                Default.Reload();
+                return;
+            }
 
             Default.Save();
             MessageBox.Show("Save", "OptionTreeView", MessageBoxButtons.OK, MessageBoxIcon.Information);
