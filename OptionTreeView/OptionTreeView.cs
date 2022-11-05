@@ -4,6 +4,9 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -15,6 +18,7 @@ namespace OptionTreeView
         #region Fields
         bool Changed;
         int VisibleIndex;
+        string program;
         readonly ToolTip ToolTip1;
         readonly List<Panel> Panels;
         readonly object[] rgbs = new object[] { //RGB color codes chart
@@ -31,6 +35,16 @@ namespace OptionTreeView
             "330033", "660066", "990099", "CC00CC", "FF00FF", "FF33FF", "FF66FF", "FF99FF", "FFCCFF",
             "330019", "660033", "99004C", "CC0066", "FF007F", "FF3399", "FF66B2", "FF99CC", "FFCCE5",
             "000000", "202020", "404040", "606060", "808080", "A0A0A0", "C0C0C0", "E0E0E0", "FFFFFF"};
+
+        OpenFileDialog OpenCheatDialog = null;
+        SaveFileDialog SaveCheatDialog = null;
+        DataContractJsonSerializer JsonSerializer = null;
+        enum Manage
+        {
+            Export,
+            Import,
+            Restore,
+        }
         #endregion
 
         #region Constructors
@@ -42,7 +56,6 @@ namespace OptionTreeView
             VisibleIndex = -1;
             ToolTip1 = new ToolTip();
             Panels = new List<Panel>();
-            TreeGroupOptions = new List<(object Value, string TreeName, string GroupName, string Name, string Description, uint Seq)>();
         }
         #endregion
 
@@ -189,6 +202,111 @@ namespace OptionTreeView
             else if (control is TextBox textBox) newVal = textBox.Text;
 
             if (option.Name.Length > 0 && newVal != null) UpdateSettings(option.Name, newVal);
+        }
+
+        private void ExoprtImport_Click(object sender, EventArgs e)
+        {
+            Button control = sender as Button;
+            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
+            Manage manage = (Manage)option.Value;
+            try
+            {
+                if (manage == Manage.Export)
+                {
+                    SaveCheatDialog.Filter = "Settings Json (*.json)|*.json";
+                    SaveCheatDialog.FileName = program + "Settings";
+                    SaveCheatDialog.AddExtension = true;
+                    SaveCheatDialog.RestoreDirectory = true;
+
+                    if (SaveCheatDialog.ShowDialog() != DialogResult.OK) return;
+
+                    var propertyInfos = Default.GetType().GetProperties();
+                    List<OptionJson> optionJsons = new List<OptionJson>();
+                    foreach (var propInfo in propertyInfos)
+                    {
+                        if (!propInfo.CanWrite) continue;
+
+                        SettingsProperty property = Default.Properties[propInfo.Name];
+
+                        if (property == null) continue;
+
+                        string name = property.Name;
+                        object value = Default[name];
+                        if (value != null) value = value.ToString();
+                        optionJsons.Add(new OptionJson(name, value));
+                    }
+
+                    using (var msObj = new MemoryStream())
+                    {
+                        JsonSerializer.WriteObject(msObj, optionJsons);
+                        var bytes = msObj.ToArray();
+                        string json = Encoding.UTF8.GetString(bytes, 0, bytes.Length).Replace("},{", "},\n{");
+                        using (var myStream = new StreamWriter(SaveCheatDialog.FileName)) myStream.Write(json);
+                    }
+                }
+                else if (manage == Manage.Import)
+                {
+                    OpenCheatDialog.Filter = "Settings Json (*.json)|*.json";
+                    OpenCheatDialog.FileName = program + "Settings";
+                    OpenCheatDialog.AddExtension = true;
+                    OpenCheatDialog.RestoreDirectory = true;
+
+                    if (OpenCheatDialog.ShowDialog() != DialogResult.OK) return;
+
+                    string settingsText = File.ReadAllText(OpenCheatDialog.FileName);
+                    using (var msObj = new MemoryStream(Encoding.UTF8.GetBytes(settingsText)))
+                    {
+                        List<OptionJson> optionJsons = (List<OptionJson>)JsonSerializer.ReadObject(msObj);
+                        if (optionJsons == null || optionJsons.Count == 0) throw new Exception("optionJson is invalid\n" + settingsText);
+
+                        foreach (var optionJson in optionJsons)
+                        {
+                            if (optionJson.Name == null || optionJson.Name == "") throw new Exception(String.Format("optionJson is invalid\nName:{0}, Value:{1}", optionJson.Name, optionJson.Value));
+                            SettingsProperty property = Default.Properties[optionJson.Name];
+
+                            Type optionInstanceType = property.PropertyType;
+                            var converter = TypeDescriptor.GetConverter(optionInstanceType);
+                            var x = converter.ConvertFrom(optionJson.Value);
+                            UpdateSettings(optionJson.Name, x);
+                        }
+                        Default.Save();
+                        Changed = false;
+                    }
+                    ToolTip1.RemoveAll();
+                    for (int idx = 0; idx < Panels.Count; idx++)
+                    {
+                        var panel = Panels[idx];
+                        if (panel.Controls.Count > 0) RecursiveDispose(panel.Controls[0]);
+                        panel.Dispose();
+                    }
+                    Panels.Clear();
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    InitSettings(Default);
+                }
+                else if (manage == Manage.Restore)
+                {
+                    if (MessageBox.Show("Are you sure you want to reset the settings to default?", "Restore", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+
+                    Default.Reset();
+
+                    ToolTip1.RemoveAll();
+                    for (int idx = 0; idx < Panels.Count; idx++)
+                    {
+                        var panel = Panels[idx];
+                        if (panel.Controls.Count > 0) RecursiveDispose(panel.Controls[0]);
+                        panel.Dispose();
+                    }
+                    Panels.Clear();
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    InitSettings(Default);
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(String.Format("{0}\nManage:{1}\n{2}", exception.Message, manage, exception.StackTrace), exception.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
         }
 
         private void ColorNum_ValueChanged(object sender, EventArgs e)
@@ -353,7 +471,13 @@ namespace OptionTreeView
         /// Get or set whether to automatically add spaces between CamelCases of LabelName. Default is true.
         /// </summary>
         [Category("Behavior"), Description("Get or set whether to automatically add spaces between CamelCases and number. Default is false. Example: Abc123DefGhi => Abc 123 Def Ghi"), DefaultValue(true)]
-        public bool InsertSpaceOnCamelCaseNumber { get; set; } = false;
+        public bool InsertSpaceOnCamelCaseNumber { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets whether to display the export-import tree page. Default is true.
+        /// </summary>
+        [Category("Behavior"), Description("Gets or sets whether to display the export-import tree page. Default is true."), DefaultValue(true)]
+        public bool ShowExportImportTreePage { get; set; } = true;
         #endregion
         #region properties Layout
         /// <summary>
@@ -437,13 +561,13 @@ namespace OptionTreeView
         /// Application settings defaultInstance
         /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SettingsBase Default { get; private set; }
+        public ApplicationSettingsBase Default { get; private set; }
 
         /// <summary>
         /// Remember the result of parsing the Settings.settings of properties
         /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public List<(object Value, string TreeName, string GroupName, string Name, string Description, uint Seq)> TreeGroupOptions { get; private set; }
+        public List<(dynamic Value, string TreeName, string GroupName, string Name, string Description, uint Seq)> TreeGroupOptions { get; private set; }
         #endregion
 
         #region Init TreeGroupOptions
@@ -452,13 +576,17 @@ namespace OptionTreeView
         /// </summary>
         /// <param name="default_">Properties.Settings.Default</param>
         /// <param name="OptionTypeSeparator">Gets or sets the Separator for Option<T>. Default is '|'</param>
-        public void InitSettings(SettingsBase default_, char OptionTypeSeparator = '|')
+        public void InitSettings(ApplicationSettingsBase default_, char OptionTypeSeparator = '|')
         {
             if (default_ == null || default_.Properties.Count == 0) throw new ArgumentException("InitSettings failed: Settings is null", "default_");
 
             uint seq = 0;
             Default = default_;
+            program = Path.GetFileNameWithoutExtension(Default.GetType().Module.Name);
+
             OptionTypeConverter.Separator = OptionTypeSeparator;
+            if (TreeGroupOptions != null) TreeGroupOptions.Clear();
+            TreeGroupOptions = new List<(dynamic Value, string TreeName, string GroupName, string Name, string Description, uint Seq)>();
 
             var propertyInfos = Default.GetType().GetProperties();
 
@@ -526,11 +654,25 @@ namespace OptionTreeView
         {
             if (TreeGroupOptions.Count == 0) return;
 
+            Panels.Clear();
+            OptionLeftView.Nodes.Clear();
             TableLayoutPanel TablePanelTop = null;
             TableLayoutPanel TablePanelSub = null;
             GroupBox groupBox = null;
             Font numFont = new Font(Font.FontFamily, 8, FontStyle.Bold);
             (object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) tmpOption = (null, null, null, null, null, 0);
+
+            if (ShowExportImportTreePage)
+            {
+                TreeGroupOptions.Add((Manage.Export, "ExoprtImport", "Managing settings", "Export now", "Export now", (uint)TreeGroupOptions.Count));
+                TreeGroupOptions.Add((Manage.Import, "ExoprtImport", "Managing settings", "Import now", "Import now", (uint)TreeGroupOptions.Count));
+                TreeGroupOptions.Add((Manage.Restore, "ExoprtImport", "Managing settings", "Restore default", "Restore default", (uint)TreeGroupOptions.Count));
+
+                if (OpenCheatDialog == null) OpenCheatDialog = new OpenFileDialog();
+                if (SaveCheatDialog == null) SaveCheatDialog = new SaveFileDialog();
+                if (JsonSerializer == null) JsonSerializer = new DataContractJsonSerializer(typeof(List<OptionJson>));
+            }
+
             foreach ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq) option in TreeGroupOptions)
             {
                 if (tmpOption.Name == null || tmpOption.TreeName != option.TreeName)
@@ -607,17 +749,25 @@ namespace OptionTreeView
                 Control control = null;
                 bool isKnownColor = false;
                 (int DecimalPlaces, decimal Increment, decimal Maximum, decimal Minimum, decimal Value) numeric = (0, 0, 0, 0, 0);
-                if (option.Value is sbyte sbyteVal) numeric = (0, 1, 127, -127, sbyteVal);
-                else if (option.Value is short shortVal) numeric = (0, 1, 0x7FFF, -0x8000, shortVal);
-                else if (option.Value is int intVal) numeric = (0, 1, 0x7FFFFFFF, -0x80000000, intVal);
-                else if (option.Value is long longVal) numeric = (0, 1, 0x7FFFFFFFFFFFFFFF, -0x8000000000000000, longVal);
-                else if (option.Value is byte byteVal) numeric = (0, 1, 255, 0, byteVal);
-                else if (option.Value is ushort ushortVal) numeric = (0, 1, 0xFFFF, 0, ushortVal);
-                else if (option.Value is uint uintVal) numeric = (0, 1, 0xFFFFFFFF, 0, uintVal);
-                else if (option.Value is ulong ulongVal) numeric = (0, 1, 0xFFFFFFFFFFFFFFFF, 0, ulongVal);
+                if (option.Value is Manage manage)
+                {
+                    control = new Button();
+                    control.SuspendLayout();
+                    control.Tag = option;
+                    control.Text = manage.ToString();
+                    control.Click += ExoprtImport_Click;
+                }
+                else if (option.Value is sbyte sbyteVal    ) numeric = (0, 1, 127, -127, sbyteVal);
+                else if (option.Value is short shortVal    ) numeric = (0, 1, 0x7FFF, -0x8000, shortVal);
+                else if (option.Value is int intVal        ) numeric = (0, 1, 0x7FFFFFFF, -0x80000000, intVal);
+                else if (option.Value is long longVal      ) numeric = (0, 1, 0x7FFFFFFFFFFFFFFF, -0x8000000000000000, longVal);
+                else if (option.Value is byte byteVal      ) numeric = (0, 1, 255, 0, byteVal);
+                else if (option.Value is ushort ushortVal  ) numeric = (0, 1, 0xFFFF, 0, ushortVal);
+                else if (option.Value is uint uintVal      ) numeric = (0, 1, 0xFFFFFFFF, 0, uintVal);
+                else if (option.Value is ulong ulongVal    ) numeric = (0, 1, 0xFFFFFFFFFFFFFFFF, 0, ulongVal);
                 else if (option.Value is decimal decimalVal) numeric = (FloatingPointDecimalPlaces, 1, 0xFFFFFFFFFFFFFFFF, -0x8000000000000000, decimalVal);
-                else if (option.Value is float floatVal) numeric = (FloatingPointDecimalPlaces, 1, 0xFFFFFFFFFFFFFFFF, -0x8000000000000000, new decimal(floatVal));
-                else if (option.Value is double doubleVal) numeric = (FloatingPointDecimalPlaces, 1, 0xFFFFFFFFFFFFFFFF, -0x8000000000000000, new decimal(doubleVal));
+                else if (option.Value is float floatVal    ) numeric = (FloatingPointDecimalPlaces, 1, 0xFFFFFFFFFFFFFFFF, -0x8000000000000000, new decimal(floatVal));
+                else if (option.Value is double doubleVal  ) numeric = (FloatingPointDecimalPlaces, 1, 0xFFFFFFFFFFFFFFFF, -0x8000000000000000, new decimal(doubleVal));
                 else if (option.Value is Enum enumVal)
                 {
                     control = new ComboBox { FormattingEnabled = true };
@@ -786,8 +936,9 @@ namespace OptionTreeView
                 {
                     Type innerType = !optionInstanceType.IsGenericType ? optionInstanceType : optionInstanceType.GetGenericArguments()[0];
                     object newValue;
-                    if (innerType.Name == "FontFamily") newValue = new FontFamily(newVal.ToString());
-                    else if (innerType.Name == "Color") newValue = (Color)newVal;
+                    if (newVal is BaseOption baseOption) newValue = baseOption.BaseObject;
+                    else if(innerType.Name == "FontFamily") newValue = new FontFamily(newVal.ToString());
+                    else if (newVal is Color) newValue = (Color)newVal;
                     else
                     {
                         TypeConverter innerTypeConverter = TypeDescriptor.GetConverter(innerType);
@@ -799,7 +950,7 @@ namespace OptionTreeView
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message + "\n" + exception.StackTrace, exception.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                MessageBox.Show(String.Format("{0}\nname:{1} newVal:{2}\n{3}", exception.Message, name, newVal, exception.StackTrace), exception.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
         }
 

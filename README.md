@@ -27,8 +27,10 @@ that automatically generates options windows view. (using Settings.settings)
 - According to the parsing result, the settings are `assigned to different trees and groups`.
 - For `standard type` settings, trees and groups will be set to `"Default"`.
 - After specifying the Type of settings to `"OptionTreeView.Option" generic class`, the settings can be categorized into the `specified trees and groups`.
+- Added support for `export and import and restore` settings feature. This feature requires `ShowExportImportTreePage` to be enabled.
 
 ![OptionForm](assets/OptionForm.webp)
+![Managing.settings](assets/Managing.settings.webp)
 
 
 ## Getting Started
@@ -157,6 +159,7 @@ optionTreeView1.InitSettings(Properties.Settings.Default);
 `InsertSpaceOnCamelCaseGroupName`: Get or set whether to automatically add spaces between CamelCases of GroupName. Default is true.  
 `InsertSpaceOnCamelCaseLabelName`: Get or set whether to automatically add spaces between CamelCases of LabelName. Default is true.  
 `InsertSpaceOnCamelCaseNumber`: Get or set whether to automatically add spaces between CamelCases and number. Default is false. Example: Abc123DefGhi => Abc 123 Def Ghi.  
+`ShowExportImportTreePage`: Gets or sets whether to display the export-import tree page. Default is true.
 
 - Layout
 `OptionLeftCollapsed`: Gets or sets a value determining whether OptionLeft is collapsed or expanded.  

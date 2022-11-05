@@ -3,10 +3,25 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Drawing;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
 namespace OptionTreeView
 {
+    [DataContract]
+    public class OptionJson
+    {
+        [DataMember]
+        public string Name { get; set; }
+        [DataMember]
+        public Object Value { get; set; }
+        public OptionJson(string name, Object value)
+        {
+            Name = name;
+            Value = value;
+        }
+    }
+
     public class BaseOption
     {
         public dynamic BaseObject { get; set; }
@@ -49,7 +64,14 @@ namespace OptionTreeView
             }
         }
         public Option(dynamic value, string treeName = "Default", string groupName = "Default", string description = "", object minObject = null, object maxObject = null) : base(value, treeName, groupName, description, minObject, maxObject) { }
-        public override string ToString() => Value == null ? "" : Value.ToString();
+        public override string ToString()
+        {
+            string result = "";
+            if (Value == null) result = "";
+            else if (Value is Color color) result = color.ToArgb().ToString("X");
+            else result = Value.ToString();
+            return result;
+        }
     }
 
     public class OptionTypeConverter : TypeConverter
@@ -83,7 +105,7 @@ namespace OptionTreeView
         /// With reflection and without the code knowing anything about 't', the closest you can get is an interface for MyType
         /// https://www.reddit.com/r/csharp/comments/f2t0hw/comment/fherb76/?utm_source=share&utm_medium=web2x&context=3
         /// </summary>
-        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value == null) return (BaseOption)Activator.CreateInstance(TypeOfOptionWithGenericArgument, null, "Default", "Default", "");
             if (!(value is string str)) return base.ConvertFrom(context, culture, value);
@@ -116,7 +138,7 @@ namespace OptionTreeView
         /// Cast generic type without knowing T
         /// https://social.msdn.microsoft.com/Forums/en-US/e1f9a9c0-ddb7-41b8-aad8-c2c4a8ef5e84/cast-generic-type-without-knowing-t?forum=aspcsharp
         /// </summary>
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType != typeof(string) || !GenericInstanceType.IsGenericType || GenericInstanceType.GetGenericTypeDefinition() != typeof(Option<>))
                 return base.ConvertTo(context, culture, value, destinationType);
