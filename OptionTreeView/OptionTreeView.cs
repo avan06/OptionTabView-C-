@@ -54,7 +54,7 @@ namespace OptionTreeView
 
             Changed = false;
             VisibleIndex = -1;
-            ToolTip1 = new ToolTip();
+            ToolTip1 = new ToolTip() { ShowAlways = true };
             Panels = new List<Panel>();
         }
         #endregion
@@ -192,7 +192,9 @@ namespace OptionTreeView
         {
             Control control = sender as Control;
             var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
-            ToolTip1.Show(option.Description, control, ShowToolTipDuration); //https://stackoverflow.com/a/8225836
+
+            if (ShowToolTipDuration > 32767) ShowToolTipDuration = 32767; //Warning! MSDN states this is Int32, but anything over 32767 will fail. https://stackoverflow.com/a/8225836
+            ToolTip1.Show(option.Description, control, ShowToolTipDuration);
         }
 
         private void Control_Changed(object sender, EventArgs e)
@@ -456,8 +458,8 @@ namespace OptionTreeView
         /// <summary>
         /// Gets or sets the number of decimal places for floating-point numbers.
         /// </summary>
-        [Category("Behavior"), Description("Gets or sets the number containing the duration, in milliseconds, to display the ToolTip.")]
-        public int ShowToolTipDuration { get; set; } = 15000;
+        [Category("Behavior"), Description("Gets or sets the number containing the duration, in milliseconds, to display the ToolTip. Warning! MSDN states this is Int32, but anything over 32767 will fail.")]
+        public int ShowToolTipDuration { get; set; } = 32767;
 
         /// <summary>
         /// Get or set whether to automatically add spaces between CamelCases of GroupName. Default is true.
