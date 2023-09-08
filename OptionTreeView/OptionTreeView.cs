@@ -194,7 +194,7 @@ namespace OptionTreeView
             var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
 
             if (ShowToolTipDuration > 32767) ShowToolTipDuration = 32767; //Warning! MSDN states this is Int32, but anything over 32767 will fail. https://stackoverflow.com/a/8225836
-            ToolTip1.Show(option.Description, control, ShowToolTipDuration);
+            ToolTip1.Show(option.Description?.Replace("\\n", Environment.NewLine), control, ShowToolTipDuration);
         }
 
         private void Control_Changed(object sender, EventArgs e)
