@@ -881,6 +881,7 @@ namespace OptionTreeView
                         Value = numeric.Value,
                         ThousandsSeparator = true
                     };
+                    if (option.Name.EndsWith("Hex")) ((NumericUpDown)control).Hexadecimal = true;
                     control.Tag = option;
                     ((NumericUpDown)control).ValueChanged += Control_Changed;
                 }
