@@ -39,6 +39,7 @@ namespace OptionTreeView
         OpenFileDialog OpenCheatDialog = null;
         SaveFileDialog SaveCheatDialog = null;
         DataContractJsonSerializer JsonSerializer = null;
+        Dictionary<string, object> ChangesDict = null;
         enum Manage
         {
             Export,
@@ -56,6 +57,7 @@ namespace OptionTreeView
             VisibleIndex = -1;
             ToolTip1 = new ToolTip() { ShowAlways = true };
             Panels = new List<Panel>();
+            ChangesDict = new Dictionary<string, object>();
         }
         #endregion
 
@@ -73,14 +75,20 @@ namespace OptionTreeView
             SelectNextControl((Control)sender, true, true, true, true); //Move the focus before closing to confirm whether there is an option in editing
             if (!Changed) return;
 
-            if (MessageBox.Show("Do you want to save settings before leaving??", "OptionFormClosing", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            StringBuilder sb = new StringBuilder("Would you like to save the changes before exiting? (Yes: Save / No: Exit)\n");
+            if (DisplayChangesListWhenSaving && ChangesDict.Count > 0)
+            {
+                sb.Insert(0, "The following settings have been modified. ");
+                foreach (var kvp in ChangesDict) sb.AppendLine($"{kvp.Key}: {kvp.Value}");
+            }
+            if (MessageBox.Show(sb.ToString(), "OptionFormClosing", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
             {
                 Default.Reload();
                 return;
             }
 
             Default.Save();
-            MessageBox.Show("Save", "OptionTreeView", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("New settings have been saved", "OptionTreeView", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void ParentForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -484,6 +492,12 @@ namespace OptionTreeView
         /// </summary>
         [Category("Behavior"), Description("Gets or sets whether to display the export-import tree page. Default is true."), DefaultValue(true)]
         public bool ShowExportImportTreePage { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets whether to display the list of change options when saving. Default is true.
+        /// </summary>
+        [Category("Behavior"), Description("Gets or sets whether to display the list of change options when saving. Default is true."), DefaultValue(true)]
+        public bool DisplayChangesListWhenSaving { get; set; } = true;
         #endregion
         #region properties Layout
         /// <summary>
@@ -954,6 +968,7 @@ namespace OptionTreeView
                     optionInstanceType.GetProperty("Value").SetValue(value, newValue);
                 }
                 if (!Changed) Changed = true;
+                if (DisplayChangesListWhenSaving) ChangesDict[name] = newVal;
             }
             catch (Exception exception)
             {
