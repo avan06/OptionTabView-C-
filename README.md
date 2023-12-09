@@ -160,6 +160,7 @@ optionTreeView1.InitSettings(Properties.Settings.Default);
 `InsertSpaceOnCamelCaseLabelName`: Get or set whether to automatically add spaces between CamelCases of LabelName. Default is true.  
 `InsertSpaceOnCamelCaseNumber`: Get or set whether to automatically add spaces between CamelCases and number. Default is false. Example: Abc123DefGhi => Abc 123 Def Ghi.  
 `ShowExportImportTreePage`: Gets or sets whether to display the export-import tree page. Default is true.
+`DisplayChangesListWhenSaving`: Gets or sets whether to display the list of change options when saving. Default is true.
 
 - Layout
 `OptionLeftCollapsed`: Gets or sets a value determining whether OptionLeft is collapsed or expanded.  

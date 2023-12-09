@@ -83,5 +83,8 @@
     <Setting Name="Setting2" Type="OptionTreeView.Option&lt;int&gt;" Scope="User">
       <Value Profile="(Default)">456|Other||This is Setting2|400|9999</Value>
     </Setting>
+    <Setting Name="Setting3ulongHex" Type="OptionTreeView.Option&lt;ulong&gt;" Scope="User">
+      <Value Profile="(Default)">0x400000000|Other||This is Setting3ulongHex</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -79,7 +79,13 @@ namespace OptionTreeView
             if (DisplayChangesListWhenSaving && ChangesDict.Count > 0)
             {
                 sb.Insert(0, "The following settings have been modified. ");
-                foreach (var kvp in ChangesDict) sb.AppendLine($"{kvp.Key}: {kvp.Value}");
+                sb.AppendLine();
+                foreach (KeyValuePair<string, object> kvp in ChangesDict)
+                {
+                    if (kvp.Key.EndsWith("Hex") && kvp.Value is Decimal value)
+                        sb.AppendLine($"{kvp.Key}: 0x{((ulong)value).ToString("X")}");
+                    else sb.AppendLine($"{kvp.Key}: {kvp.Value}");
+                }
             }
             if (MessageBox.Show(sb.ToString(), "OptionFormClosing", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
             {
@@ -133,7 +139,7 @@ namespace OptionTreeView
                 }
                 else if (ctrl is CheckBox checkBox) checkBox.CheckedChanged -= Control_Changed;
                 else if (ctrl is TextBox textBox) textBox.Leave -= Control_Changed;
-                else if (ctrl is NumericUpDown upDown)
+                else if (ctrl is NumericUpDownEx upDown)
                 {
                     upDown.ValueChanged -= Control_Changed;
                     upDown.ValueChanged -= ColorNum_ValueChanged;
@@ -212,7 +218,7 @@ namespace OptionTreeView
             var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
             if (control is ComboBox comboBox) newVal = comboBox.SelectedItem;
             else if (control is CheckBox checkBox) newVal = checkBox.Checked;
-            else if (control is NumericUpDown numericUpDown) newVal = numericUpDown.Value;
+            else if (control is NumericUpDownEx numericUpDown) newVal = numericUpDown.Value;
             else if (control is TextBox textBox) newVal = textBox.Text;
 
             if (option.Name.Length > 0 && newVal != null) UpdateSettings(option.Name, newVal);
@@ -327,9 +333,9 @@ namespace OptionTreeView
         {
             Control control = sender as Control;
             bool isComboBox = control is ComboBox;
-            var ColorR = control.Parent.Controls.Find("ColorR", false)[0] as NumericUpDown;
-            var ColorG = control.Parent.Controls.Find("ColorG", false)[0] as NumericUpDown;
-            var ColorB = control.Parent.Controls.Find("ColorB", false)[0] as NumericUpDown;
+            var ColorR = control.Parent.Controls.Find("ColorR", false)[0] as NumericUpDownEx;
+            var ColorG = control.Parent.Controls.Find("ColorG", false)[0] as NumericUpDownEx;
+            var ColorB = control.Parent.Controls.Find("ColorB", false)[0] as NumericUpDownEx;
             var ColorBox = control.Parent.Controls.Find("ColorBox", false)[0] as ComboBox;
 
             if (isComboBox)
@@ -805,9 +811,9 @@ namespace OptionTreeView
                 }
                 else if (option.Value is Color color)
                 {
-                    var numR = new NumericUpDown() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.R };
-                    var numG = new NumericUpDown() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.G };
-                    var numB = new NumericUpDown() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.B };
+                    var numR = new NumericUpDownEx() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.R };
+                    var numG = new NumericUpDownEx() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.G };
+                    var numB = new NumericUpDownEx() { Increment = 5, Maximum = 255, Minimum = 0, Value = color.B };
                     numR.ValueChanged += ColorNum_ValueChanged;
                     numG.ValueChanged += ColorNum_ValueChanged;
                     numB.ValueChanged += ColorNum_ValueChanged;
@@ -886,7 +892,7 @@ namespace OptionTreeView
 
                 if (numeric.Maximum != 0)
                 {
-                    control = new NumericUpDown
+                    control = new NumericUpDownEx
                     {
                         DecimalPlaces = numeric.DecimalPlaces,
                         Increment = numeric.Increment,
@@ -895,9 +901,9 @@ namespace OptionTreeView
                         Value = numeric.Value,
                         ThousandsSeparator = true
                     };
-                    if (option.Name.EndsWith("Hex")) ((NumericUpDown)control).Hexadecimal = true;
+                    if (option.Name.EndsWith("Hex")) ((NumericUpDownEx)control).Hexadecimal = true;
                     control.Tag = option;
-                    ((NumericUpDown)control).ValueChanged += Control_Changed;
+                    ((NumericUpDownEx)control).ValueChanged += Control_Changed;
                 }
 
                 TablePanelSub.Controls.Add(control);
