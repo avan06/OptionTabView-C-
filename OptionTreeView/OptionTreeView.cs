@@ -504,6 +504,12 @@ namespace OptionTreeView
         /// </summary>
         [Category("Behavior"), Description("Gets or sets whether to display the list of change options when saving. Default is true."), DefaultValue(true)]
         public bool DisplayChangesListWhenSaving { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a custom description dictionary for options. If set, the content of the description will replace the description value in Properties.Settings. Not used by default.
+        /// </summary>
+        [Category("Behavior"), Description("Gets or sets a custom description dictionary for options. If set, the content of the description will replace the description value in Properties.Settings. Not used by default."), DefaultValue(true)]
+        public IDictionary<string, object> DescriptionDict { get; set; } = null;
         #endregion
         #region properties Layout
         /// <summary>
@@ -649,6 +655,7 @@ namespace OptionTreeView
 
                 if ((oTreeName ?? "") == "") oTreeName = "Default";
                 if ((oGroupName ?? "") == "") oGroupName = ShowDefaultGroupName ? "Default" : "";
+                if (DescriptionDict != null && DescriptionDict.ContainsKey(name)) oDescription = (string)DescriptionDict[name];
                 TreeGroupOptions.Add((oValue, oTreeName, oGroupName, name, oDescription, seq++));
             }
 

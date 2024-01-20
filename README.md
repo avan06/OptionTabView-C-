@@ -161,6 +161,7 @@ optionTreeView1.InitSettings(Properties.Settings.Default);
 `InsertSpaceOnCamelCaseNumber`: Get or set whether to automatically add spaces between CamelCases and number. Default is false. Example: Abc123DefGhi => Abc 123 Def Ghi.  
 `ShowExportImportTreePage`: Gets or sets whether to display the export-import tree page. Default is true.
 `DisplayChangesListWhenSaving`: Gets or sets whether to display the list of change options when saving. Default is true.
+`DescriptionDict`: Gets or sets a custom description dictionary for options. If set, the content of the description will replace the description value in Properties.Settings. Not used by default.  
 
 - Layout
 `OptionLeftCollapsed`: Gets or sets a value determining whether OptionLeft is collapsed or expanded.  
