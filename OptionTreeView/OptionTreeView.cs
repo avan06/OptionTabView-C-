@@ -506,10 +506,15 @@ namespace OptionTreeView
         public bool DisplayChangesListWhenSaving { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a custom description dictionary for options. If set, the content of the description will replace the description value in Properties.Settings. Not used by default.
+        /// Gets or sets an additional customized information Dictionary for use with options. Not used by default.
+        /// The format and explanation of the Dictionary keys are as follows:
+        /// 1. tree_Name, for example, tree_General. If the tree_Name is set as the key, the value will be displayed as the Tree name(General).
+        /// 2. group_Name, for example, group_Connect. If the group_Name is set as the key, the value will be displayed as the Group name(Connect).
+        /// 3. description_OptionName, for example, description_UIFont. If the description_OptionName(UIFont) is set as the key, the value will be used as the description text for OptionName(UIFont).
+        /// 4. OptionName, for example, UIFont. If the OptionName is set as the key, the value will be displayed as the OptionName(UIFont).
         /// </summary>
-        [Category("Behavior"), Description("Gets or sets a custom description dictionary for options. If set, the content of the description will replace the description value in Properties.Settings. Not used by default."), DefaultValue(true)]
-        public IDictionary<string, object> DescriptionDict { get; set; } = null;
+        [Category("Behavior"), Description("Gets or sets an additional customized information Dictionary for use with options. Not used by default. The format and explanation of the Dictionary keys are as follows:\r\n\r\n1. tree_Name, for example, tree_General. If the tree_Name is set as the key, the value will be displayed as the Tree name(General).\r\n2. group_Name, for example, group_Connect. If the group_Name is set as the key, the value will be displayed as the Group name(Connect).\r\n3. description_OptionName, for example, description_UIFont. If the description_OptionName(UIFont) is set as the key, the value will be used as the description text for OptionName(UIFont).\r\n4. OptionName, for example, UIFont. If the OptionName is set as the key, the value will be displayed as the OptionName(UIFont)."), DefaultValue(null)]
+        public IDictionary<string, object> AdditionalInfoDict { get; set; } = null;
         #endregion
         #region properties Layout
         /// <summary>
@@ -655,7 +660,7 @@ namespace OptionTreeView
 
                 if ((oTreeName ?? "") == "") oTreeName = "Default";
                 if ((oGroupName ?? "") == "") oGroupName = ShowDefaultGroupName ? "Default" : "";
-                if (DescriptionDict != null && DescriptionDict.ContainsKey(name)) oDescription = (string)DescriptionDict[name];
+                if (AdditionalInfoDict != null && AdditionalInfoDict.ContainsKey("description_" + name)) oDescription = (string)AdditionalInfoDict["description_" + name];
                 TreeGroupOptions.Add((oValue, oTreeName, oGroupName, name, oDescription, seq++));
             }
 
@@ -710,7 +715,9 @@ namespace OptionTreeView
             {
                 if (tmpOption.Name == null || tmpOption.TreeName != option.TreeName)
                 { //Create new tree node and TableLayoutPanel when TreeName has changed
-                    TreeNode OptionLeftNode = new TreeNode(SortTreeBeforeUnderline && option.TreeName.Contains("_") ? option.TreeName.Split(new char[] { '_' }, 2)[1] : option.TreeName);
+                    string treeName = SortTreeBeforeUnderline && option.TreeName.Contains("_") ? option.TreeName.Split(new char[] { '_' }, 2)[1] : option.TreeName;
+                    if (AdditionalInfoDict != null && AdditionalInfoDict.ContainsKey("tree_" + treeName)) treeName = (string)AdditionalInfoDict["tree_" + treeName];
+                    TreeNode OptionLeftNode = new TreeNode(treeName);
                     OptionLeftNode.ForeColor = OptionLeftView.ForeColor;
                     OptionLeftNode.BackColor = OptionLeftView.BackColor;
                     OptionLeftView.Nodes.Add(OptionLeftNode);
@@ -750,7 +757,9 @@ namespace OptionTreeView
                     groupBox.BackColor = base.BackColor;
 
                     var groupText = SortGroupBeforeUnderline && option.GroupName.Contains("_") ? option.GroupName.Split(new char[] { '_' }, 2)[1] : option.GroupName;
-                    groupBox.Text = InsertSpaceOnCamelCaseGroupName ? InsertSpaceOnCamelCase(groupText) : groupText;
+                    if (AdditionalInfoDict != null && AdditionalInfoDict.ContainsKey("group_" + groupText)) groupText = (string)AdditionalInfoDict["group_" + groupText];
+                    else groupText = InsertSpaceOnCamelCaseGroupName ? InsertSpaceOnCamelCase(groupText) : groupText;
+                    groupBox.Text = groupText;
                     groupBox.Dock = DockStyle.Fill;
                     groupBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                     groupBox.AutoSize = true;
@@ -773,7 +782,10 @@ namespace OptionTreeView
                 TablePanelSub.RowCount++;
                 TablePanelSub.RowStyles.Add(new RowStyle());
 
-                label.Text = InsertSpaceOnCamelCaseLabelName ? InsertSpaceOnCamelCase(option.Name) : option.Name;
+                string name = option.Name;
+                if (AdditionalInfoDict != null && AdditionalInfoDict.ContainsKey(name)) name = (string)AdditionalInfoDict[name];
+                else name = InsertSpaceOnCamelCaseLabelName ? InsertSpaceOnCamelCase(option.Name) : option.Name;
+                label.Text = name;
                 label.AutoSize = true;
                 label.Tag = option;
                 label.Dock = DockStyle.Fill;

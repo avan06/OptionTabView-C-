@@ -114,7 +114,7 @@ namespace OptionTreeView
 
             object obj, minObj = null, maxObj = null;
             if (InnerType.Name == "FontFamily")
-                obj = Regex.Match(parts[0], @"\[FontFamily: *Name=([^]]+)\]") is Match m1 && m1.Success ? new FontFamily(m1.Groups[1].Value) : new FontFamily(parts[0]);
+                obj = Regex.Match(parts[0], @"\[FontFamily: *Name=([^]]+)\]") is Match m1 && m1.Success ? new FontFamily(m1.Groups[1].Value) : SystemFonts.DefaultFont.FontFamily;
             else if (InnerType.Name == "Color")
             {
                 bool isARGB = uint.TryParse(parts[0], NumberStyles.HexNumber, null, out uint argb);

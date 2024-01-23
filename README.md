@@ -160,8 +160,12 @@ optionTreeView1.InitSettings(Properties.Settings.Default);
 `InsertSpaceOnCamelCaseLabelName`: Get or set whether to automatically add spaces between CamelCases of LabelName. Default is true.  
 `InsertSpaceOnCamelCaseNumber`: Get or set whether to automatically add spaces between CamelCases and number. Default is false. Example: Abc123DefGhi => Abc 123 Def Ghi.  
 `ShowExportImportTreePage`: Gets or sets whether to display the export-import tree page. Default is true.
-`DisplayChangesListWhenSaving`: Gets or sets whether to display the list of change options when saving. Default is true.
-`DescriptionDict`: Gets or sets a custom description dictionary for options. If set, the content of the description will replace the description value in Properties.Settings. Not used by default.  
+`DisplayChangesListWhenSaving`: Gets or sets whether to display the list of change options when saving. Default is true.  
+`AdditionalInfoDict`: Gets or sets an additional customized information Dictionary for use with options. Not used by default. The format and explanation of the Dictionary keys are as follows:  
+  1. tree_Name, for example, tree_General. If the tree_Name is set as the key, the value will be displayed as the Tree name(General).  
+  2. group_Name, for example, group_Connect. If the group_Name is set as the key, the value will be displayed as the Group name(Connect).  
+  3. description_OptionName, for example, description_UIFont. If the description_OptionName(UIFont) is set as the key, the value will be used as the description text for OptionName(UIFont).  
+  4. OptionName, for example, UIFont. If the OptionName is set as the key, the value will be displayed as the OptionName(UIFont).  
 
 - Layout
 `OptionLeftCollapsed`: Gets or sets a value determining whether OptionLeft is collapsed or expanded.  
