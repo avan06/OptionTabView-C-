@@ -661,6 +661,7 @@ namespace OptionTreeView
                 if ((oTreeName ?? "") == "") oTreeName = "Default";
                 if ((oGroupName ?? "") == "") oGroupName = ShowDefaultGroupName ? "Default" : "";
                 if (AdditionalInfoDict != null && AdditionalInfoDict.ContainsKey("description_" + name)) oDescription = (string)AdditionalInfoDict["description_" + name];
+                else if (AdditionalInfoDict != null && name.Contains(" ") && AdditionalInfoDict.ContainsKey("description_" + name.Replace(" ", "_0020_"))) oDescription = (string)AdditionalInfoDict["description_" + name.Replace(" ", "_0020_")];
                 TreeGroupOptions.Add((oValue, oTreeName, oGroupName, name, oDescription, seq++));
             }
 
@@ -717,6 +718,7 @@ namespace OptionTreeView
                 { //Create new tree node and TableLayoutPanel when TreeName has changed
                     string treeName = SortTreeBeforeUnderline && option.TreeName.Contains("_") ? option.TreeName.Split(new char[] { '_' }, 2)[1] : option.TreeName;
                     if (AdditionalInfoDict != null && AdditionalInfoDict.ContainsKey("tree_" + treeName)) treeName = (string)AdditionalInfoDict["tree_" + treeName];
+                    else if (AdditionalInfoDict != null && treeName.Contains(" ") && AdditionalInfoDict.ContainsKey("tree_" + treeName.Replace(" ", "_0020_"))) treeName = (string)AdditionalInfoDict["tree_" + treeName.Replace(" ", "_0020_")];
                     TreeNode OptionLeftNode = new TreeNode(treeName);
                     OptionLeftNode.ForeColor = OptionLeftView.ForeColor;
                     OptionLeftNode.BackColor = OptionLeftView.BackColor;
@@ -758,6 +760,7 @@ namespace OptionTreeView
 
                     var groupText = SortGroupBeforeUnderline && option.GroupName.Contains("_") ? option.GroupName.Split(new char[] { '_' }, 2)[1] : option.GroupName;
                     if (AdditionalInfoDict != null && AdditionalInfoDict.ContainsKey("group_" + groupText)) groupText = (string)AdditionalInfoDict["group_" + groupText];
+                    else if(AdditionalInfoDict != null && groupText.Contains(" ") && AdditionalInfoDict.ContainsKey("group_" + groupText.Replace(" ", "_0020_"))) groupText = (string)AdditionalInfoDict["group_" + groupText.Replace(" ", "_0020_")];
                     else groupText = InsertSpaceOnCamelCaseGroupName ? InsertSpaceOnCamelCase(groupText) : groupText;
                     groupBox.Text = groupText;
                     groupBox.Dock = DockStyle.Fill;
