@@ -886,11 +886,13 @@ namespace OptionTreeView
                 {
                     control = new ComboBox { FormattingEnabled = true };
                     control.Tag = option;
+                    ((ComboBox)control).Items.Add("DefaultFont");
                     foreach (var enumObj in FontFamily.Families)
                     {
                         ((ComboBox)control).Items.Add(enumObj.Name);
                         if (enumObj.Name == fontFamily.Name) ((ComboBox)control).SelectedItem = enumObj.Name;
                     }
+                    if (fontFamily.Name == SystemFonts.DefaultFont.FontFamily.Name) ((ComboBox)control).SelectedIndex = 0;
 
                     ((ComboBox)control).DrawMode = DrawMode.OwnerDrawFixed;
                     ((ComboBox)control).DrawItem += new DrawItemEventHandler(FontBox_DrawItem);
@@ -986,7 +988,7 @@ namespace OptionTreeView
                     Type innerType = !optionInstanceType.IsGenericType ? optionInstanceType : optionInstanceType.GetGenericArguments()[0];
                     object newValue;
                     if (newVal is BaseOption baseOption) newValue = baseOption.BaseObject;
-                    else if(innerType.Name == "FontFamily") newValue = new FontFamily(newVal.ToString());
+                    else if (innerType.Name == "FontFamily") newValue = newVal.ToString() == "DefaultFont" ? SystemFonts.DefaultFont.FontFamily : new FontFamily(newVal.ToString());
                     else if (newVal is Color) newValue = (Color)newVal;
                     else
                     {
