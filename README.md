@@ -61,6 +61,7 @@ that automatically generates options windows view. (using Settings.settings)
 - `System.Drawing.Color` for Color Selector ComboBox.
 - `System.Drawing.KnownColor` for Color Picker ComboBox.
 - `System.Drawing.FontFamily` for Font Selector ComboBox.
+- `System.Windows.Forms.KeyEventArgs` for Key down event handler.
 - The Settings in the GUI Designer interface cannot set the type to a generic class, but...
 - You can open Settings.settings with `XML(text) Editor`, and insert the generic class inside <Settings>, Refer to [Generic types for Settings.settings](https://stackoverflow.com/a/4046036)
 - The format of the `OptionTreeView.Option` generic class in the setting value is: "value`|`TreeName`|`GroupName`|`Description`|`MinValue`|`MaxValue", use Vertical bar(`|`) to separate text, such as 
@@ -98,6 +99,9 @@ that automatically generates options windows view. (using Settings.settings)
     </Setting>
     <Setting Name="FontFamily1" Type="OptionTreeView.Option&lt;System.Drawing.FontFamily&gt;" Scope="User">
       <Value Profile="(Default)">[FontFamily: Name=Microsoft Sans Serif]|1_General|3_FontFamily|This is FontFamily1</Value>
+    </Setting>
+    <Setting Name="Key1" Type="OptionTreeView.Option&lt;System.Windows.Forms.KeyEventArgs&gt;" Scope="User">
+      <Value Profile="(Default)">Ctrl + NumPad0|1_General|4_KeyOptions|This is Key1</Value>
     </Setting>
     <Setting Name="IP" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
       <Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>

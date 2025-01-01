@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace OptionTreeView
 {
@@ -121,6 +122,37 @@ namespace OptionTreeView
                 if (argb < 0x01000000) argb += 0xFF000000;
                 obj = isARGB ? Color.FromArgb((int)argb) : Color.FromName(parts[0]);
             }
+            else if (InnerType.Name == "Keys")
+            {
+                string keyCombination = parts[0];
+                // Initialize default states for Keys
+                bool control = false;
+                bool shift = false;
+                bool alt = false;
+                Keys keyCode = Keys.None;
+
+                // Split the input string by '+' and trim spaces
+                var keyParts = keyCombination.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in keyParts)
+                {
+                    string trimmedPart = part.Trim();
+
+                    // Check for modifier keys
+                    if (string.Equals(trimmedPart, "Ctrl", StringComparison.OrdinalIgnoreCase))
+                        control = true;
+                    else if (string.Equals(trimmedPart, "Shift", StringComparison.OrdinalIgnoreCase))
+                        shift = true;
+                    else if (string.Equals(trimmedPart, "Alt", StringComparison.OrdinalIgnoreCase))
+                        alt = true;
+                    else
+                    { // Assume the remaining part is the main key
+                        if (Enum.TryParse(trimmedPart, true, out Keys parsedKey)) keyCode = parsedKey;
+                        else throw new ArgumentException($"Invalid key: {trimmedPart}");
+                    }
+                }
+                obj = keyCode = (control ? Keys.Control : Keys.None) | (shift ? Keys.Shift : Keys.None) | (alt ? Keys.Alt : Keys.None) | keyCode;
+            }
             else
             {
                 obj = InnerTypeConverter.ConvertFrom(parts[0]);
@@ -145,6 +177,7 @@ namespace OptionTreeView
 
             var newVal = GenericInstanceType.GetProperty("Value").GetValue(value, null);
             if (InnerType.Name == "Color") newVal = ((Color)newVal).ToArgb().ToString("X");
+            else if (InnerType.Name == "Keys") newVal = KeysToString((Keys)newVal);
 
             return string.Format("{0}" + Separator + "{1}" + Separator + "{2}" + Separator + "{3}" + Separator + "{4}" + Separator + "{5}",
                 newVal,
@@ -153,6 +186,22 @@ namespace OptionTreeView
                 GenericInstanceType.GetProperty("Description").GetValue(value, null),
                 GenericInstanceType.GetProperty("MinObject").GetValue(value, null),
                 GenericInstanceType.GetProperty("MaxObject").GetValue(value, null));
+        }
+
+        public string KeysToString(Keys keys)
+        {
+            string keyCombination = "";
+
+            if ((keys & Keys.Control) == Keys.Control)
+                keyCombination += "Ctrl + ";
+            if ((keys & Keys.Shift) == Keys.Shift)
+                keyCombination += "Shift + ";
+            if ((keys & Keys.Alt) == Keys.Alt)
+                keyCombination += "Alt + ";
+
+            keyCombination += (keys & ~Keys.Control & ~Keys.Shift & ~Keys.Alt).ToString();
+
+            return keyCombination;
         }
     }
 }

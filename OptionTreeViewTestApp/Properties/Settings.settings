@@ -26,6 +26,15 @@
     <Setting Name="FontFamily1" Type="OptionTreeView.Option&lt;System.Drawing.FontFamily&gt;" Scope="User">
       <Value Profile="(Default)">[FontFamily: Name=Microsoft Sans Serif]|1_General|3_FontFamily|This is FontFamily1</Value>
     </Setting>
+    <Setting Name="Key1" Type="OptionTreeView.Option&lt;System.Windows.Forms.Keys&gt;" Scope="User">
+      <Value Profile="(Default)">Ctrl + NumPad0|1_General|4_KeyOptions|This is Key1</Value>
+    </Setting>
+    <Setting Name="Key2" Type="OptionTreeView.Option&lt;System.Windows.Forms.Keys&gt;" Scope="User">
+      <Value Profile="(Default)">Shift + D4|1_General|4_KeyOptions|This is Key2</Value>
+    </Setting>
+    <Setting Name="Key3" Type="OptionTreeView.Option&lt;System.Windows.Forms.Keys&gt;" Scope="User">
+      <Value Profile="(Default)">Alt + OemMinus|1_General|4_KeyOptions|This is Key3</Value>
+    </Setting>
     <Setting Name="IP" Type="OptionTreeView.Option&lt;string&gt;" Scope="User">
       <Value Profile="(Default)">192.168.1.1|1_General|Z_Connect1|This is IP</Value>
     </Setting>

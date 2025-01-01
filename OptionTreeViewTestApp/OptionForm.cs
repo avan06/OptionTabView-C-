@@ -24,6 +24,8 @@ namespace OptionTreeViewTestApp
         {
             InitializeComponent();
 
+            Properties.Settings.Default.Upgrade();
+
             optionTreeView1.InitSettings(Properties.Settings.Default);
         }
     }

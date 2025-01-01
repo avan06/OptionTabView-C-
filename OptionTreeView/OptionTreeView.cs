@@ -82,9 +82,12 @@ namespace OptionTreeView
                 sb.AppendLine();
                 foreach (KeyValuePair<string, object> kvp in ChangesDict)
                 {
-                    if (kvp.Key.EndsWith("Hex") && kvp.Value is Decimal value)
-                        sb.AppendLine($"{kvp.Key}: 0x{((ulong)value).ToString("X")}");
-                    else sb.AppendLine($"{kvp.Key}: {kvp.Value}");
+                    object result;
+                    if (kvp.Key.EndsWith("Hex") && kvp.Value is Decimal value) result = $"0x{(ulong)value:X}";
+                    else if (kvp.Value is Keys keys) result = KeysToString(keys);
+                    else result = kvp.Value;
+
+                    sb.AppendLine($"{kvp.Key}: {result}");
                 }
             }
             if (MessageBox.Show(sb.ToString(), "OptionFormClosing", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
@@ -200,6 +203,37 @@ namespace OptionTreeView
                 g.DrawString(comboBox.Items[e.Index].ToString(), font, brush, e.Bounds);
                 e.DrawFocusRectangle(); //If the ComboBox has focus, draw a focus rectangle around the selected item.
             }
+        }
+
+        private void KeyControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            Control control = sender as Control;
+            var option = ((object Value, string TreeName, string GroupName, string Name, string Description, uint Seq))control.Tag;
+            e.Handled = true; // Prevent default behavior
+            e.SuppressKeyPress = true; // Suppress keypress sound
+
+            // Check if only Ctrl, Shift, or Alt is pressed
+            if (e.KeyCode == Keys.ControlKey || e.KeyCode == Keys.ShiftKey || e.KeyCode == Keys.Menu) return;
+
+            if (!Enum.Equals(option.Value, e.KeyData)) UpdateSettings(option.Name, e.KeyData);
+
+            control.Text = KeysToString(e.KeyData);
+        }
+
+        public string KeysToString(Keys keys)
+        {
+            string keyCombination = "";
+
+            if ((keys & Keys.Control) == Keys.Control)
+                keyCombination += "Ctrl + ";
+            if ((keys & Keys.Shift) == Keys.Shift)
+                keyCombination += "Shift + ";
+            if ((keys & Keys.Alt) == Keys.Alt)
+                keyCombination += "Alt + ";
+
+            keyCombination += (keys & ~Keys.Control & ~Keys.Shift & ~Keys.Alt).ToString();
+
+            return keyCombination;
         }
 
         private void Control_MouseHover(object sender, EventArgs e)
@@ -805,6 +839,14 @@ namespace OptionTreeView
                     control.Text = manage.ToString();
                     control.Click += ExoprtImport_Click;
                 }
+                else if (option.Value is Keys eventArgs)
+                {
+                    control = new TextBox();
+                    control.SuspendLayout();
+                    control.Tag = option;
+                    control.KeyDown += KeyControl_KeyDown;
+                    KeyControl_KeyDown(control, new KeyEventArgs(eventArgs));
+                }
                 else if (option.Value is sbyte sbyteVal    ) numeric = (0, 1, 127, -127, sbyteVal);
                 else if (option.Value is short shortVal    ) numeric = (0, 1, 0x7FFF, -0x8000, shortVal);
                 else if (option.Value is int intVal        ) numeric = (0, 1, 0x7FFFFFFF, -0x80000000, intVal);
@@ -989,7 +1031,8 @@ namespace OptionTreeView
                     object newValue;
                     if (newVal is BaseOption baseOption) newValue = baseOption.BaseObject;
                     else if (innerType.Name == "FontFamily") newValue = newVal.ToString() == "DefaultFont" ? SystemFonts.DefaultFont.FontFamily : new FontFamily(newVal.ToString());
-                    else if (newVal is Color) newValue = (Color)newVal;
+                    else if (newVal is Color) newValue = newVal;
+                    else if (newVal is Keys) newValue = newVal;
                     else
                     {
                         TypeConverter innerTypeConverter = TypeDescriptor.GetConverter(innerType);

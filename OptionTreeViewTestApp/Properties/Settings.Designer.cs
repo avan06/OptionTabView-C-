@@ -12,7 +12,7 @@ namespace OptionTreeViewTestApp.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.8.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.12.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -117,6 +117,42 @@ namespace OptionTreeViewTestApp.Properties {
             }
             set {
                 this["FontFamily1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Ctrl + NumPad0|1_General|4_KeyOptions|This is Key1")]
+        public global::OptionTreeView.Option<System.Windows.Forms.Keys> Key1 {
+            get {
+                return ((global::OptionTreeView.Option<System.Windows.Forms.Keys>)(this["Key1"]));
+            }
+            set {
+                this["Key1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Shift + D4|1_General|4_KeyOptions|This is Key2")]
+        public global::OptionTreeView.Option<System.Windows.Forms.Keys> Key2 {
+            get {
+                return ((global::OptionTreeView.Option<System.Windows.Forms.Keys>)(this["Key2"]));
+            }
+            set {
+                this["Key2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Alt + OemMinus|1_General|4_KeyOptions|This is Key3")]
+        public global::OptionTreeView.Option<System.Windows.Forms.Keys> Key3 {
+            get {
+                return ((global::OptionTreeView.Option<System.Windows.Forms.Keys>)(this["Key3"]));
+            }
+            set {
+                this["Key3"] = value;
             }
         }
         
