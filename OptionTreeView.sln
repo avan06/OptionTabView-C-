@@ -1,16 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionTreeView", "OptionTreeView\OptionTreeView.csproj", "{31E9397F-B2CC-429C-845C-576E7BCBDE6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionTreeView", "OptionTreeView\OptionTreeView.csproj", "{353CC872-23C9-4B8A-9774-7E5A489D1D5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionTreeViewTestApp", "OptionTreeViewTestApp\OptionTreeViewTestApp.csproj", "{F05E2086-1873-4F53-BF25-C2883E03B9B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionTreeViewTestApp", "OptionTreeViewTestApp\OptionTreeViewTestApp.csproj", "{A9C5904A-0BDC-4DC0-A0FC-B8FE7D0D819D}"
 	ProjectSection(ProjectDependencies) = postProject
-		{31E9397F-B2CC-429C-845C-576E7BCBDE6E} = {31E9397F-B2CC-429C-845C-576E7BCBDE6E}
+		{353CC872-23C9-4B8A-9774-7E5A489D1D5C} = {353CC872-23C9-4B8A-9774-7E5A489D1D5C}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FCA04979-D2B0-48B5-8FD5-129184411B3F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{475F6639-1C86-4400-A440-4272DE976C4A}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
@@ -21,19 +21,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{31E9397F-B2CC-429C-845C-576E7BCBDE6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31E9397F-B2CC-429C-845C-576E7BCBDE6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31E9397F-B2CC-429C-845C-576E7BCBDE6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31E9397F-B2CC-429C-845C-576E7BCBDE6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F05E2086-1873-4F53-BF25-C2883E03B9B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F05E2086-1873-4F53-BF25-C2883E03B9B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F05E2086-1873-4F53-BF25-C2883E03B9B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F05E2086-1873-4F53-BF25-C2883E03B9B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{353CC872-23C9-4B8A-9774-7E5A489D1D5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{353CC872-23C9-4B8A-9774-7E5A489D1D5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{353CC872-23C9-4B8A-9774-7E5A489D1D5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{353CC872-23C9-4B8A-9774-7E5A489D1D5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9C5904A-0BDC-4DC0-A0FC-B8FE7D0D819D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9C5904A-0BDC-4DC0-A0FC-B8FE7D0D819D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9C5904A-0BDC-4DC0-A0FC-B8FE7D0D819D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9C5904A-0BDC-4DC0-A0FC-B8FE7D0D819D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {78FB1FD3-2ADF-47FF-9AEE-9F2CD27B7885}
 	EndGlobalSection
 EndGlobal

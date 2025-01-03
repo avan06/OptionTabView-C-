@@ -52,11 +52,11 @@ namespace OptionTreeView
     /// </summary>
     [TypeConverter(typeof(OptionTypeConverter))]
     [SettingsSerializeAs(SettingsSerializeAs.String)]
-    public class Option<dynamic> : BaseOption
+    public class Option<Dynamic> : BaseOption
     {
-        public dynamic Value
+        public Dynamic Value
         {
-            get => (dynamic)BaseObject;
+            get => (Dynamic)BaseObject;
             set
             {
                 if (MinObject != null && MinObject.GetType().Name != "String" && value < MinObject) value = MinObject;
@@ -64,7 +64,7 @@ namespace OptionTreeView
                 BaseObject = value;
             }
         }
-        public Option(dynamic value, string treeName = "Default", string groupName = "Default", string description = "", object minObject = null, object maxObject = null) : base(value, treeName, groupName, description, minObject, maxObject) { }
+        public Option(Dynamic value, string treeName = "Default", string groupName = "Default", string description = "", object minObject = null, object maxObject = null) : base(value, treeName, groupName, description, minObject, maxObject) { }
         public override string ToString()
         {
             string result = "";

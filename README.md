@@ -1,6 +1,6 @@
 ﻿# Overview
 
-OptionTreeView is a `UserControl` written in `.Net Framework 4.8`,  
+OptionTreeView is a `UserControl` written in `.Net Framework 4.8` and `.NET 8`,  
 that automatically generates options windows view. (using Settings.settings)  
 
 
